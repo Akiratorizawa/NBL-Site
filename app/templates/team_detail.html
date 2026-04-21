@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{{ team.name }} — RBL.GG{% endblock %}
+
+{% block content %}
+
+{% set logos = {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"} %}
+
+<!-- TEAM HERO -->
+<div class="team-detail-hero" data-logo="{{ team.logo }}" style="border-bottom: 1px solid var(--border); background: linear-gradient(135deg, {{ team.color }}08 0%, transparent 60%);">
+  <div style="height: 3px; background: {{ team.color }}; box-shadow: 0 0 16px {{ team.color }}; margin-bottom: 0;"></div>
+  <div class="container" style="padding-top: 48px; padding-bottom: 48px;">
+    <a href="{{ url_for('teams') }}" style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3); display:inline-flex; align-items:center; gap:6px; margin-bottom:24px; transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-3)'">
+      ← All Teams
+    </a>
+
+    <div class="team-detail-logo">{{ team.logo }}</div>
+    <h1 class="team-detail-name" style="color: {{ team.color }}; text-shadow: 0 0 40px {{ team.color }}44;">{{ team.name }}</h1>
+    <div class="team-detail-city">{{ team.city }} · #{{ team.abbr }}</div>
+
+    <div class="stats-row">
+      <div class="stat-block">
+        <div class="stat-value" style="color: var(--accent);">{{ team.wins }}</div>
+        <div class="stat-label">Wins</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value" style="color: var(--red);">{{ team.losses }}</div>
+        <div class="stat-label">Losses</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value">{{ "%.3f"|format(team.wins / (team.wins + team.losses)) }}</div>
+        <div class="stat-label">Win %</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value">{{ team.points_for }}</div>
+        <div class="stat-label">Pts For</div>
+      </div>
+      <div class="stat-block">
+        {% set diff = team.points_for - team.points_against %}
+        <div class="stat-value {% if diff > 0 %}diff-pos{% elif diff < 0 %}diff-neg{% endif %}">
+          {% if diff > 0 %}+{% endif %}{{ diff }}
+        </div>
+        <div class="stat-label">Pt Diff</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 48px 0;" class="detail-grid">
+
+    <!-- ROSTER -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">Roster</h2>
+      </div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;">
+        <div style="padding: 14px 20px; background: var(--bg-panel); border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3);">
+          <span>Player</span>
+          <div style="display:flex; gap:40px;">
+            <span>Pos</span>
+            <span>Rating</span>
+          </div>
+        </div>
+        {% for player in team.roster %}
+        <div style="display:flex; align-items:center; justify-content:space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
+          <div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;">{{ player.name }}</div>
+            <div style="font-size:12px; color:var(--text-3);">{{ team.name }}</div>
+          </div>
+          <div style="display:flex; gap:40px; align-items:center;">
+            <span style="font-family:var(--font-mono); font-size:12px; color:var(--text-3); background:var(--bg-deep); padding: 3px 8px; border-radius:3px; letter-spacing:0.08em;">{{ player.position }}</span>
+            <span style="font-family:var(--font-display); font-size:20px; font-weight:800; color:{{ team.color }}; text-shadow: 0 0 10px {{ team.color }}66; min-width:36px; text-align:center;">{{ player.rating }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- MATCH HISTORY -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">Match History</h2>
+      </div>
+      {% if matches %}
+      <div class="match-grid">
+        {% for match in matches %}
+        {% set is_home = match.home == team.name %}
+        {% set team_score = match.home_score if is_home else match.away_score %}
+        {% set opp_score = match.away_score if is_home else match.home_score %}
+        {% set opp_name = match.away if is_home else match.home %}
+        <div class="match-card {{ match.status }}" style="grid-template-columns: 1fr auto; padding: 16px 20px; gap: 12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="team-logo-sm">{{ logos[opp_name] }}</div>
+            <div>
+              <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3); margin-bottom:2px;">
+                {{ "HOME" if is_home else "AWAY" }} · {{ match.stage }}
+              </div>
+              <div style="font-family:var(--font-display); font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;">vs {{ opp_name }}</div>
+              <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-3);">{{ match.date }}</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            {% if match.status == "completed" %}
+              {% if team_score > opp_score %}
+                <div style="font-family:var(--font-display); font-size:22px; font-weight:900; color:var(--accent);">W</div>
+                <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-2);">{{ team_score }}–{{ opp_score }}</div>
+              {% else %}
+                <div style="font-family:var(--font-display); font-size:22px; font-weight:900; color:var(--red);">L</div>
+                <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-2);">{{ team_score }}–{{ opp_score }}</div>
+              {% endif %}
+            {% else %}
+              <span class="badge badge-upcoming">TBD</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <div class="empty">No matches recorded.</div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+@media (max-width: 768px) {
+  .detail-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+{% endblock %}

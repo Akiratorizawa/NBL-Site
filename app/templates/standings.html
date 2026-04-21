@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Standings — RBL.GG{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1 class="page-title">Stand<span>ings</span></h1>
+      </div>
+      <div class="page-meta">SEASON 1 · Week 12 of 22</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="standings-wrap">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th style="width:48px;">#</th>
+            <th>Team</th>
+            <th class="num">W</th>
+            <th class="num">L</th>
+            <th class="num">PCT</th>
+            <th class="num">PF</th>
+            <th class="num">PA</th>
+            <th class="num">DIFF</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team in standings %}
+          <tr class="rank-{{ team.rank }} {% if team.rank <= 3 %}top-3{% endif %}">
+            <td>
+              <div class="rank-num">{{ team.rank }}</div>
+            </td>
+            <td>
+              <a href="{{ url_for('team_detail', team_id=team.id) }}" style="display:inline-flex; align-items:center; gap:14px; text-decoration:none;">
+                <div class="team-logo-sm">{{ team.logo }}</div>
+                <div>
+                  <div class="team-name-main">{{ team.name }}</div>
+                  <div class="team-abbr">{{ team.city }} · {{ team.abbr }}</div>
+                </div>
+              </a>
+            </td>
+            <td class="num" style="font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--accent);">{{ team.wins }}</td>
+            <td class="num" style="font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--red);">{{ team.losses }}</td>
+            <td class="num win-pct">{{ "%.3f"|format(team.pct) }}</td>
+            <td class="num" style="font-family:var(--font-mono); font-size:13px; color:var(--text-2);">{{ team.points_for }}</td>
+            <td class="num" style="font-family:var(--font-mono); font-size:13px; color:var(--text-2);">{{ team.points_against }}</td>
+            <td class="num">
+              <span class="{% if team.diff > 0 %}diff-pos{% elif team.diff < 0 %}diff-neg{% else %}diff-neu{% endif %}" style="font-family:var(--font-mono); font-size:13px;">
+                {% if team.diff > 0 %}+{% endif %}{{ team.diff }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Legend -->
+    <div style="margin-top: 20px; display: flex; gap: 24px; flex-wrap: wrap;">
+      <div style="display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; color:var(--text-3); letter-spacing:0.1em;">
+        <div style="width:3px; height:14px; background:var(--accent); border-radius:2px;"></div>
+        PLAYOFF POSITION
+      </div>
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-3); letter-spacing:0.1em;">
+        PCT = WIN PERCENTAGE · PF = POINTS FOR · PA = POINTS AGAINST · DIFF = POINT DIFFERENTIAL
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

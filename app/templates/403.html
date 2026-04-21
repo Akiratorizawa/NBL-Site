@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}403 Forbidden — NBL.GG{% endblock %}
+{% block content %}
+<div class="container" style="text-align:center; padding: 100px 24px;">
+  <div style="font-size:72px; margin-bottom:16px;">🚫</div>
+  <h1 style="font-size:64px; font-weight:900; color:var(--accent); letter-spacing:-0.03em; margin-bottom:12px;">403</h1>
+  <p style="font-size:18px; color:var(--text-2); margin-bottom:32px;">You don't have permission to access this page.</p>
+  <a href="{{ url_for('home') }}" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %}

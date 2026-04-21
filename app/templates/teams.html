@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Teams — RBL.GG{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1 class="page-title">The <span>Teams</span></h1>
+      </div>
+      <div class="page-meta">SEASON 1 · {{ teams|length }} franchises</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="teams-grid">
+      {% for team in teams %}
+      <div class="team-card" style="--team-color: {{ team.color }};">
+        <div class="team-card-header">
+          <div class="team-card-logo">{{ team.logo }}</div>
+          <div class="team-card-name">{{ team.name }}</div>
+          <div class="team-card-city">{{ team.city }}</div>
+        </div>
+
+        <div class="team-card-accent"></div>
+
+        <div class="team-card-body">
+          <div class="team-record">
+            <div class="record-stat">
+              <div class="record-value wins">{{ team.wins }}</div>
+              <div class="record-label">Wins</div>
+            </div>
+            <div class="record-stat">
+              <div class="record-value losses">{{ team.losses }}</div>
+              <div class="record-label">Losses</div>
+            </div>
+            <div class="record-stat">
+              <div class="record-value" style="font-size:20px; color:var(--text-1);">{{ "%.3f"|format(team.wins / (team.wins + team.losses)) }}</div>
+              <div class="record-label">Win %</div>
+            </div>
+          </div>
+
+          <div class="roster-title">Roster</div>
+          <div class="roster-list">
+            {% for player in team.roster %}
+            <div class="roster-player">
+              <span class="player-name">{{ player.name }}</span>
+              <span class="player-pos">{{ player.position }}</span>
+              <span class="player-rating" style="color: {{ team.color }};">{{ player.rating }}</span>
+            </div>
+            {% endfor %}
+          </div>
+
+          <a href="{{ url_for('team_detail', team_id=team.id) }}" class="view-team-btn">
+            View Team →
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

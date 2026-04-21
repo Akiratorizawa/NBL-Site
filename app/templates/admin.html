@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel — NBL.GG{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1 class="page-title">Admin <span>Panel</span></h1>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <img src="{{ current_user.avatar }}" alt="" class="nav-avatar" style="width:36px;height:36px;" />
+        <div>
+          <div style="font-weight:700; font-size:14px;">{{ current_user.username }}</div>
+          <div class="page-meta">League Administrator</div>
+        </div>
+        <span class="badge badge-upcoming" style="margin-left:8px;">Admin</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN GRID -->
+  <div class="admin-grid">
+
+    <!-- ── A: ANNOUNCEMENTS ──────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">📢</div>
+        <div>
+          <div class="admin-card-title">Announcements</div>
+          <div class="admin-card-sub">Post a banner message visible to all visitors</div>
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="add_announcement" />
+        <div class="form-group">
+          <label class="form-label">New Announcement</label>
+          <textarea name="message" class="form-input form-textarea"
+            placeholder="e.g. SEASON 1 playoffs begin May 2nd — watch the livestream!" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Post Announcement</button>
+      </form>
+
+      <!-- Existing announcements -->
+      {% if announcements %}
+      <div class="admin-list">
+        <div class="admin-list-label">Active Announcements ({{ announcements|length }})</div>
+        {% for ann in announcements %}
+        <div class="admin-list-item">
+          <div class="admin-list-item-body">
+            <div class="admin-list-msg">{{ ann.message }}</div>
+            <div class="admin-list-meta">Posted {{ ann.created }}</div>
+          </div>
+          <form method="POST" action="{{ url_for('admin') }}" style="flex-shrink:0;">
+            <input type="hidden" name="action" value="delete_announcement" />
+            <input type="hidden" name="announcement_id" value="{{ ann.id }}" />
+            <button type="submit" class="btn-icon-delete" title="Delete">✕</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="admin-empty">No announcements posted yet.</div>
+      {% endif %}
+    </div>
+
+    <!-- ── B: MATCH RESULTS ──────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">🏀</div>
+        <div>
+          <div class="admin-card-title">Post Match Result</div>
+          <div class="admin-card-sub">Add a completed match to the schedule</div>
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="add_match" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Home Team</label>
+            <select name="home_team" class="form-input form-select" required>
+              <option value="">Select team…</option>
+              {% for t in teams %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Away Team</label>
+            <select name="away_team" class="form-input form-select" required>
+              <option value="">Select team…</option>
+              {% for t in teams %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Home Score</label>
+            <input type="number" name="home_score" class="form-input" min="0" max="999" placeholder="0" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Away Score</label>
+            <input type="number" name="away_score" class="form-input" min="0" max="999" placeholder="0" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Stage / Week Label</label>
+          <input type="text" name="stage" class="form-input" placeholder="e.g. Week 13" value="Week 13" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-sm">Add Result</button>
+      </form>
+
+      <!-- Recent results -->
+      {% if recent_matches %}
+      <div class="admin-list">
+        <div class="admin-list-label">Recent Results</div>
+        {% for m in recent_matches %}
+        <div class="admin-list-item" style="justify-content:space-between;">
+          <div style="font-size:13px; font-weight:600;">{{ m.home }} <span style="color:var(--accent);">{{ m.home_score }}</span> – <span style="color:var(--accent);">{{ m.away_score }}</span> {{ m.away }}</div>
+          <div class="admin-list-meta">{{ m.date }} · {{ m.stage }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- ── C: PLAYER MANAGEMENT ──────────────────────── -->
+    <div class="admin-card admin-card-wide">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">👤</div>
+        <div>
+          <div class="admin-card-title">Player Management</div>
+          <div class="admin-card-sub">Transfer a player to a different team</div>
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="transfer_player" />
+        <div class="form-row form-row-3">
+          <div class="form-group">
+            <label class="form-label">Player</label>
+            <select name="player_name" class="form-input form-select" required>
+              <option value="">Select player…</option>
+              {% for p in players %}
+              <option value="{{ p.name }}">{{ p.name }} ({{ p.team_abbr }} · {{ p.pos }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transfer To</label>
+            <select name="new_team" class="form-input form-select" required>
+              <option value="">Select new team…</option>
+              {% for t in teams %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group" style="display:flex; align-items:flex-end;">
+            <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Transfer Player</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Player roster table -->
+      <div class="admin-list" style="margin-top:20px;">
+        <div class="admin-list-label">Current Roster ({{ players|length }} players)</div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Pos</th>
+                <th class="num">PPG</th>
+                <th class="num">APG</th>
+                <th class="num">RPG</th>
+                <th class="num">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in players | sort(attribute='ppg', reverse=True) %}
+              <tr>
+                <td style="font-weight:700;">{{ p.name }}</td>
+                <td>
+                  <span class="admin-team-tag">{{ p.team_abbr }}</span>
+                  <span style="font-size:12px; color:var(--text-3); margin-left:6px;">{{ p.team }}</span>
+                </td>
+                <td><span class="player-pos">{{ p.pos }}</span></td>
+                <td class="num" style="color:var(--accent); font-weight:700;">{{ p.ppg }}</td>
+                <td class="num" style="color:var(--text-2);">{{ p.apg }}</td>
+                <td class="num" style="color:var(--text-2);">{{ p.rpg }}</td>
+                <td class="num">
+                  <span class="admin-rating">{{ p.mvp_score }}</span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-grid -->
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}RBL.GG — Roblox Basketball League{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container" style="position:relative; z-index:1;">
+    <p class="hero-eyebrow">// SEASON 1 — Now Live</p>
+    <h1 class="hero-title">
+      Roblox<br><em>Basketball</em><br>League
+    </h1>
+    <p class="hero-sub">
+      The premier competitive basketball experience on Roblox.
+      8 teams. 22 weeks. One championship.
+    </p>
+    <div class="hero-cta">
+      <a href="{{ url_for('standings') }}" class="btn btn-primary">View Standings</a>
+      <a href="{{ url_for('matches') }}" class="btn btn-outline">Match Results</a>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- TOP TEAMS + UPCOMING -->
+  <section class="section">
+    <div class="home-grid">
+
+      <!-- Mini Standings -->
+      <div>
+        <div class="section-header">
+          <h2 class="section-title">Top Teams</h2>
+          <a href="{{ url_for('standings') }}" class="section-link">Full Standings →</a>
+        </div>
+        <div class="mini-standings">
+          <div class="mini-standings-header">Conference Standings</div>
+          {% for team in top_teams %}
+          <a href="{{ url_for('team_detail', team_id=team.id) }}" style="display:block; text-decoration:none;">
+            <div class="mini-team-row rank-{{ team.rank }}">
+              <div class="mini-rank">{{ team.rank }}</div>
+              <div class="team-logo-sm">{{ team.logo }}</div>
+              <div class="mini-team-info">
+                <div class="mini-team-name">{{ team.name }}</div>
+                <div class="mini-record">{{ team.wins }}W — {{ team.losses }}L</div>
+              </div>
+              <div class="mini-pct">{{ "%.3f"|format(team.pct) }}</div>
+            </div>
+          </a>
+          {% endfor %}
+          <div style="padding: 14px 20px; border-top: 1px solid var(--border);">
+            <a href="{{ url_for('standings') }}" class="section-link">View all 8 teams →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Matches -->
+      <div>
+        <div class="section-header">
+          <h2 class="section-title">Upcoming</h2>
+          <a href="{{ url_for('matches') }}" class="section-link">All Matches →</a>
+        </div>
+        <div class="match-grid">
+          {% for match in upcoming %}
+          <div class="match-card upcoming">
+            <div class="match-team home">
+              {% set team = namespace(logo="🏀") %}
+              {% for t in ["🐺","⚡","👻","⚙️","☀️","❄️","📡","🌑"] %}{% endfor %}
+              <div class="match-team-logo">
+                {{ {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"}[match.home] }}
+              </div>
+              <div>
+                <div class="match-team-name">{{ match.home }}</div>
+                <div class="match-team-city">Home</div>
+              </div>
+            </div>
+
+            <div class="match-center">
+              <div class="match-vs">VS</div>
+              <div class="match-meta">{{ match.date }}</div>
+            </div>
+
+            <div class="match-team away">
+              <div class="match-team-logo">
+                {{ {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"}[match.away] }}
+              </div>
+              <div>
+                <div class="match-team-name">{{ match.away }}</div>
+                <div class="match-team-city">Away</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RECENT RESULTS -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Recent Results</h2>
+      <a href="{{ url_for('matches') }}" class="section-link">All Results →</a>
+    </div>
+
+    <div class="match-grid">
+      {% set logos = {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"} %}
+      {% for match in recent %}
+      <div class="match-card completed">
+        <div class="match-team home">
+          <div class="match-team-logo">{{ logos[match.home] }}</div>
+          <div>
+            <div class="match-team-name">{{ match.home }}</div>
+            <div class="match-team-city">Home</div>
+          </div>
+        </div>
+
+        <div class="match-center">
+          <div class="match-score">
+            <span class="{% if match.home_score > match.away_score %}diff-pos{% else %}loss-indicator{% endif %}">{{ match.home_score }}</span>
+            <span class="sep">–</span>
+            <span class="{% if match.away_score > match.home_score %}diff-pos{% else %}loss-indicator{% endif %}">{{ match.away_score }}</span>
+          </div>
+          <div class="match-meta">{{ match.date }}</div>
+        </div>
+
+        <div class="match-team away">
+          <div class="match-team-logo">{{ logos[match.away] }}</div>
+          <div>
+            <div class="match-team-name">{{ match.away }}</div>
+            <div class="match-team-city">Away</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

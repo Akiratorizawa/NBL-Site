@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block title %}Statistics — NBL.GG{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1 class="page-title">Player <span>Stats</span></h1>
+      </div>
+      <div class="page-meta">SEASON 1 · Week 12 · {{ top_scorers|length }} players tracked</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY BAR -->
+  <section style="padding: 40px 0 0;">
+    <div class="stats-summary-bar">
+      <div class="summary-stat-card">
+        <div class="summary-icon">🏆</div>
+        <div>
+          <div class="summary-val">{{ top_scorers[0].ppg }}</div>
+          <div class="summary-lbl">Scoring Leader</div>
+          <div class="summary-sub">{{ top_scorers[0].name }} · {{ top_scorers[0].team_abbr }}</div>
+        </div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-icon">🎯</div>
+        <div>
+          <div class="summary-val">{{ top_assists[0].apg }}</div>
+          <div class="summary-lbl">Assists Leader</div>
+          <div class="summary-sub">{{ top_assists[0].name }} · {{ top_assists[0].team_abbr }}</div>
+        </div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-icon">💪</div>
+        <div>
+          <div class="summary-val">{{ top_rebounds[0].rpg }}</div>
+          <div class="summary-lbl">Rebounds Leader</div>
+          <div class="summary-sub">{{ top_rebounds[0].name }} · {{ top_rebounds[0].team_abbr }}</div>
+        </div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-icon">⭐</div>
+        <div>
+          <div class="summary-val">{{ mvp_race[0].mvp_score }}</div>
+          <div class="summary-lbl">MVP Race Leader</div>
+          <div class="summary-sub">{{ mvp_race[0].name }} · {{ mvp_race[0].team_abbr }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD TABLES GRID -->
+  <section class="section">
+    <div class="stats-page-grid">
+
+      <!-- SCORING LEADERS -->
+      <div class="stats-table-card">
+        <div class="stats-card-header">
+          <div class="stats-card-icon">🏀</div>
+          <div>
+            <div class="stats-card-title">Scoring Leaders</div>
+            <div class="stats-card-subtitle">Points Per Game</div>
+          </div>
+        </div>
+        <table class="stats-leaderboard">
+          <thead>
+            <tr>
+              <th style="width:28px;">#</th>
+              <th>Player</th>
+              <th class="r">PPG</th>
+              <th class="r">FG%</th>
+              <th class="r">GP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in top_scorers %}
+            <tr>
+              <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
+              <td>
+                <div class="stat-player-cell">
+                  <div class="stat-player-name">{{ p.name }}</div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                </div>
+              </td>
+              <td class="r">
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span class="stat-primary-val">{{ p.ppg }}</span>
+                  <div class="stat-bar" style="width:80px;">
+                    <div class="stat-bar-fill" style="width: {{ (p.ppg / top_scorers[0].ppg * 100)|round|int }}%;"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="r"><span class="stat-secondary-val">{{ p.fg_pct }}%</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.gp }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ASSISTS LEADERS -->
+      <div class="stats-table-card">
+        <div class="stats-card-header">
+          <div class="stats-card-icon">🎯</div>
+          <div>
+            <div class="stats-card-title">Assists Leaders</div>
+            <div class="stats-card-subtitle">Assists Per Game</div>
+          </div>
+        </div>
+        <table class="stats-leaderboard">
+          <thead>
+            <tr>
+              <th style="width:28px;">#</th>
+              <th>Player</th>
+              <th class="r">APG</th>
+              <th class="r">PPG</th>
+              <th class="r">GP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in top_assists %}
+            <tr>
+              <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
+              <td>
+                <div class="stat-player-cell">
+                  <div class="stat-player-name">{{ p.name }}</div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                </div>
+              </td>
+              <td class="r">
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span class="stat-primary-val">{{ p.apg }}</span>
+                  <div class="stat-bar" style="width:80px;">
+                    <div class="stat-bar-fill" style="width: {{ (p.apg / top_assists[0].apg * 100)|round|int }}%;"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="r"><span class="stat-secondary-val">{{ p.ppg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.gp }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- REBOUNDS LEADERS -->
+      <div class="stats-table-card">
+        <div class="stats-card-header">
+          <div class="stats-card-icon">💪</div>
+          <div>
+            <div class="stats-card-title">Rebounds Leaders</div>
+            <div class="stats-card-subtitle">Rebounds Per Game</div>
+          </div>
+        </div>
+        <table class="stats-leaderboard">
+          <thead>
+            <tr>
+              <th style="width:28px;">#</th>
+              <th>Player</th>
+              <th class="r">RPG</th>
+              <th class="r">BPG</th>
+              <th class="r">GP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in top_rebounds %}
+            <tr>
+              <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
+              <td>
+                <div class="stat-player-cell">
+                  <div class="stat-player-name">{{ p.name }}</div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                </div>
+              </td>
+              <td class="r">
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span class="stat-primary-val">{{ p.rpg }}</span>
+                  <div class="stat-bar" style="width:80px;">
+                    <div class="stat-bar-fill" style="width: {{ (p.rpg / top_rebounds[0].rpg * 100)|round|int }}%;"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="r"><span class="stat-secondary-val">{{ p.bpg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.gp }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- FULL STATS TABLE -->
+      <div class="stats-table-card">
+        <div class="stats-card-header">
+          <div class="stats-card-icon">📊</div>
+          <div>
+            <div class="stats-card-title">Full Player Stats</div>
+            <div class="stats-card-subtitle">All categories · SEASON 1</div>
+          </div>
+        </div>
+        <table class="stats-leaderboard">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th class="r">PPG</th>
+              <th class="r">APG</th>
+              <th class="r">RPG</th>
+              <th class="r">SPG</th>
+              <th class="r">GP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in top_scorers %}
+            <tr>
+              <td>
+                <div class="stat-player-cell">
+                  <div class="stat-player-name">{{ p.name }}</div>
+                  <div class="stat-player-team">{{ p.team_abbr }} · {{ p.pos }}</div>
+                </div>
+              </td>
+              <td class="r"><span class="stat-primary-val" style="font-size:14px;">{{ p.ppg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.apg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.rpg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.spg }}</span></td>
+              <td class="r"><span class="stat-secondary-val">{{ p.gp }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MVP RACE -->
+  <section class="section" style="border-top: 1px solid var(--border);">
+    <div class="section-header">
+      <h2 class="section-title">MVP Race</h2>
+      <span style="font-size:12px; color:var(--text-3); font-weight:500;">Based on performance rating algorithm</span>
+    </div>
+
+    <div class="mvp-grid">
+      {% for p in mvp_race %}
+      <div class="mvp-card {% if loop.index == 1 %}mvp-card-1{% endif %}">
+        <div class="mvp-card-rank">
+          <span class="mvp-rank-badge {% if loop.index == 1 %}gold{% endif %}">
+            {% if loop.index == 1 %}🏆 MVP Frontrunner{% else %}#{{ loop.index }}{% endif %}
+          </span>
+          <span class="mvp-score-label">MVS</span>
+        </div>
+
+        <div class="mvp-player-name">{{ p.name }}</div>
+        <div class="mvp-player-meta">
+          <span>{{ p.team }}</span>
+          <span class="mvp-dot"></span>
+          <span>{{ p.pos }}</span>
+          <span class="mvp-dot"></span>
+          <span>{{ p.gp }} GP</span>
+        </div>
+
+        <div class="mvp-stats-row">
+          <div class="mvp-stat">
+            <div class="mvp-stat-val">{{ p.ppg }}</div>
+            <div class="mvp-stat-lbl">PPG</div>
+          </div>
+          <div class="mvp-stat">
+            <div class="mvp-stat-val">{{ p.apg }}</div>
+            <div class="mvp-stat-lbl">APG</div>
+          </div>
+          <div class="mvp-stat">
+            <div class="mvp-stat-val">{{ p.rpg }}</div>
+            <div class="mvp-stat-lbl">RPG</div>
+          </div>
+        </div>
+
+        <div class="mvp-score-bar">
+          <span class="mvp-score-val">{{ p.mvp_score }}</span>
+          <div class="mvp-bar">
+            <div class="mvp-bar-fill" style="width: {{ (p.mvp_score / mvp_race[0].mvp_score * 100)|round|int }}%;"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}
