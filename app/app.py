@@ -15,7 +15,6 @@ from flask import (
     Flask, render_template, session, redirect,
     url_for, request, flash, abort
 )
-from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -495,6 +494,6 @@ def forbidden(e):
     return render_template("403.html"), 403
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
 
     app.secret_key = os.getenv("SECRET_KEY")
