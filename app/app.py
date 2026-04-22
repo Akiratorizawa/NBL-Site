@@ -2,10 +2,12 @@
 """
 ADMIN PANEL:
 add game stats feature (plus button dropdowns i think)
-    - ad
 
+misc:
+- add databases
 """
 
+from dotenv import load_dotenv
 import os
 import secrets
 import requests
@@ -15,6 +17,10 @@ from flask import (
     Flask, render_template, session, redirect,
     url_for, request, flash, abort
 )
+
+load_dotenv
+
+
 
 app = Flask(__name__)
 
