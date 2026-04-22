@@ -18,7 +18,7 @@ from flask import (
     url_for, request, flash, abort
 )
 
-load_dotenv
+load_dotenv()
 
 
 
