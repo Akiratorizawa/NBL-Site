@@ -238,7 +238,7 @@
         <div class="admin-card-icon">📆</div>
         <div>
           <div class="admin-card-title">Schedule Management</div>
-          <div class="admin-card-sub">Set the active week and update schedule game status</div>
+          <div class="admin-card-sub">Set the active round and update schedule game status</div>
         </div>
       </div>
 
@@ -262,11 +262,11 @@
 
         <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
           <input type="hidden" name="action" value="set_current_week" />
-          <div class="admin-list-label">Set Current Week</div>
+          <div class="admin-list-label">Set Current Round</div>
           <div class="form-group">
-            <label class="form-label">Week</label>
+            <label class="form-label">Round</label>
             <select name="current_week" class="form-input form-select" required>
-              <option value="">Select week...</option>
+              <option value="">Select round...</option>
               {% for week in schedule_weeks %}
               <option value="{{ week }}" {% if week == current_week %}selected{% endif %}>{{ week }}</option>
               {% endfor %}
@@ -277,7 +277,7 @@
             <input type="text" name="current_week_deadline" class="form-input"
                    value="{{ current_week_deadline }}" placeholder="Deadline, Month 1st" />
           </div>
-          <button type="submit" class="btn btn-primary btn-sm">Save Current Week</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Current Round</button>
         </form>
       </div>
     </div>
@@ -378,8 +378,8 @@
               placeholder="Apr 22, 2025" value="{{ '' }}" />
           </div>
           <div class="form-group">
-            <label class="form-label">Stage / Week</label>
-            <input type="text" name="stage" class="form-input" placeholder="Week 13" value="Week 13" />
+            <label class="form-label">Stage / Round</label>
+            <input type="text" name="stage" class="form-input" placeholder="Round 13" value="Round 13" />
           </div>
         </div>
 

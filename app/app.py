@@ -114,9 +114,9 @@ def _week_number(week):
 def _normalize_week(week):
     week = (week or "").strip()
     if week.isdigit():
-        return f"Week {week}"
-    match = re.search(r"\bWeek\s+\d+\b", week, re.IGNORECASE)
-    return match.group(0).title() if match else week
+        return f"Round {week}"
+    match = re.search(r"\b(?:Round|Week|R)\s*(\d+)\b", week, re.IGNORECASE)
+    return f"Round {match.group(1)}" if match else week
 
 
 def _read_schedule_csv_rows():
@@ -147,9 +147,9 @@ def _read_schedule_csv_rows():
     for row in rows:
         cells = [cell.strip() for cell in row]
         for cell in cells:
-            week_match = re.search(r"\bWeek\s+\d+\b", cell, re.IGNORECASE)
+            week_match = re.search(r"\b(?:Round|Week|R)\s*\d+\b", cell, re.IGNORECASE)
             if week_match:
-                current_week = week_match.group(0).title()
+                current_week = _normalize_week(week_match.group(0))
                 waiting_home = ""
                 break
 
@@ -190,7 +190,7 @@ def _import_schedule_csv_if_empty():
         imported += 1
 
     if imported and not _get_site_setting("current_week"):
-        _set_site_setting("current_week", "Week 1")
+        _set_site_setting("current_week", "Round 1")
     return imported
 
 
@@ -421,7 +421,7 @@ def match_detail(match_id):
 @app.route("/schedule")
 def schedule():
     games = _get_schedule_games()
-    current_week = _get_site_setting("current_week", "Week 1")
+    current_week = _get_site_setting("current_week", "Round 1")
     return render_template(
         "schedule.html",
         schedule_by_week=_group_schedule_games(games),
@@ -861,9 +861,9 @@ def admin():
             if current_week:
                 _set_site_setting("current_week", current_week)
                 _set_site_setting("current_week_deadline", deadline)
-                flash("Current schedule week updated.", "success")
+                flash("Current schedule round updated.", "success")
             else:
-                flash("Select a current week.", "error")
+                flash("Select a current round.", "error")
 
         # ── B: Full Match + Box-Score Entry ──────────────────
         elif action == "add_match":
@@ -1096,7 +1096,7 @@ def admin():
         banner_settings=banner_settings,
         schedule_games=schedule_games,
         schedule_weeks=schedule_weeks,
-        current_week=_get_site_setting("current_week", "Week 1"),
+        current_week=_get_site_setting("current_week", "Round 1"),
         current_week_deadline=_get_site_setting("current_week_deadline", ""),
     )
 

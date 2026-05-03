@@ -154,16 +154,16 @@ INSERT OR IGNORE INTO team_records (team_id, wins, losses, points_for, points_ag
 INSERT OR IGNORE INTO matches
     (id, home_team_id, away_team_id, home_score, away_score, status, date, stage)
 VALUES
-    (1,  1, 2, 112, 98,   'completed', 'Apr 10, 2025', 'Week 12'),
-    (2,  3, 4, 105, 101,  'completed', 'Apr 10, 2025', 'Week 12'),
-    (3,  5, 6, 98,  95,   'completed', 'Apr 11, 2025', 'Week 12'),
-    (4,  7, 8, 88,  79,   'completed', 'Apr 11, 2025', 'Week 12'),
-    (5,  2, 3, 110, 104,  'completed', 'Apr 7,  2025', 'Week 11'),
-    (6,  1, 6, 121, 88,   'completed', 'Apr 7,  2025', 'Week 11'),
-    (7,  1, 3, NULL, NULL,'upcoming',  'Apr 18, 2025', 'Week 13'),
-    (8,  2, 4, NULL, NULL,'upcoming',  'Apr 18, 2025', 'Week 13'),
-    (9,  5, 8, NULL, NULL,'upcoming',  'Apr 19, 2025', 'Week 13'),
-    (10, 6, 7, NULL, NULL,'upcoming',  'Apr 19, 2025', 'Week 13');
+    (1,  1, 2, 112, 98,   'completed', 'Apr 10, 2025', 'Round 12'),
+    (2,  3, 4, 105, 101,  'completed', 'Apr 10, 2025', 'Round 12'),
+    (3,  5, 6, 98,  95,   'completed', 'Apr 11, 2025', 'Round 12'),
+    (4,  7, 8, 88,  79,   'completed', 'Apr 11, 2025', 'Round 12'),
+    (5,  2, 3, 110, 104,  'completed', 'Apr 7,  2025', 'Round 11'),
+    (6,  1, 6, 121, 88,   'completed', 'Apr 7,  2025', 'Round 11'),
+    (7,  1, 3, NULL, NULL,'upcoming',  'Apr 18, 2025', 'Round 13'),
+    (8,  2, 4, NULL, NULL,'upcoming',  'Apr 18, 2025', 'Round 13'),
+    (9,  5, 8, NULL, NULL,'upcoming',  'Apr 19, 2025', 'Round 13'),
+    (10, 6, 7, NULL, NULL,'upcoming',  'Apr 19, 2025', 'Round 13');
 
 INSERT OR IGNORE INTO player_game_stats
     (player_id,match_id,team_id,pts,fgm,fga,three_pm,three_pa,ftm,fta,ast,stl,blk,reb,tov,fls,plus_minus) VALUES
@@ -194,7 +194,7 @@ INSERT OR IGNORE INTO announcements (id, message, created_at) VALUES
 INSERT OR IGNORE INTO site_settings (key, value) VALUES
     ('banner_speed', '5'),
     ('banner_autoscroll', 'true'),
-    ('current_week', 'Week 1'),
+    ('current_week', 'Round 1'),
     ('current_week_deadline', '');
 
 INSERT OR IGNORE INTO banner_announcements (id, message, created_at) VALUES
