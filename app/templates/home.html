@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-{% block title %}RBL.GG — Roblox Basketball League{% endblock %}
+{% block title %}RBL.GG - Roblox Basketball League{% endblock %}
 
 {% block content %}
+{% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="container" style="position:relative; z-index:1;">
-    <p class="hero-eyebrow">// SEASON 1 — Now Live</p>
+    <p class="hero-eyebrow">// SEASON 1 COMING.</p>
     <h1 class="hero-title">
-      Roblox<br><em>Basketball</em><br>League
+      National<br><em>Basketball</em><br>League
     </h1>
     <p class="hero-sub">
       The premier competitive basketball experience on Roblox.
-      8 teams. 22 weeks. One championship.
     </p>
     <div class="hero-cta">
       <a href="{{ url_for('standings') }}" class="btn btn-primary">View Standings</a>
@@ -24,16 +23,12 @@
 </section>
 
 <div class="container">
-
-  <!-- TOP TEAMS + UPCOMING -->
   <section class="section">
     <div class="home-grid">
-
-      <!-- Mini Standings -->
       <div>
         <div class="section-header">
           <h2 class="section-title">Top Teams</h2>
-          <a href="{{ url_for('standings') }}" class="section-link">Full Standings →</a>
+          <a href="{{ url_for('standings') }}" class="section-link">Full Standings</a>
         </div>
         <div class="mini-standings">
           <div class="mini-standings-header">Conference Standings</div>
@@ -41,36 +36,35 @@
           <a href="{{ url_for('team_detail', team_id=team.id) }}" style="display:block; text-decoration:none;">
             <div class="mini-team-row rank-{{ team.rank }}">
               <div class="mini-rank">{{ team.rank }}</div>
-              <div class="team-logo-sm">{{ team.logo }}</div>
+              <img class="team-logo-sm team-logo-img" src="{{ team.logo_url or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div class="mini-team-info">
                 <div class="mini-team-name">{{ team.name }}</div>
-                <div class="mini-record">{{ team.wins }}W — {{ team.losses }}L</div>
+                <div class="mini-record">{{ team.wins }}W - {{ team.losses }}L</div>
               </div>
+              {% if (team.wins + team.losses) != 0 %}
               <div class="mini-pct">{{ "%.3f"|format(team.pct) }}</div>
+              {% else %}
+              <div class="mini-pct">N/A</div>
+              {% endif %}
             </div>
           </a>
           {% endfor %}
           <div style="padding: 14px 20px; border-top: 1px solid var(--border);">
-            <a href="{{ url_for('standings') }}" class="section-link">View all 8 teams →</a>
+            <a href="{{ url_for('standings') }}" class="section-link">View all teams</a>
           </div>
         </div>
       </div>
 
-      <!-- Upcoming Matches -->
       <div>
         <div class="section-header">
           <h2 class="section-title">Upcoming</h2>
-          <a href="{{ url_for('matches') }}" class="section-link">All Matches →</a>
+          <a href="{{ url_for('matches') }}" class="section-link">All Matches</a>
         </div>
         <div class="match-grid">
           {% for match in upcoming %}
           <div class="match-card upcoming">
             <div class="match-team home">
-              {% set team = namespace(logo="🏀") %}
-              {% for t in ["🐺","⚡","👻","⚙️","☀️","❄️","📡","🌑"] %}{% endfor %}
-              <div class="match-team-logo">
-                {{ {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"}[match.home] }}
-              </div>
+              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.home }}</div>
                 <div class="match-team-city">Home</div>
@@ -83,9 +77,7 @@
             </div>
 
             <div class="match-team away">
-              <div class="match-team-logo">
-                {{ {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"}[match.away] }}
-              </div>
+              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.away }}</div>
                 <div class="match-team-city">Away</div>
@@ -95,23 +87,20 @@
           {% endfor %}
         </div>
       </div>
-
     </div>
   </section>
 
-  <!-- RECENT RESULTS -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title">Recent Results</h2>
-      <a href="{{ url_for('matches') }}" class="section-link">All Results →</a>
+      <a href="{{ url_for('matches') }}" class="section-link">All Results</a>
     </div>
 
     <div class="match-grid">
-      {% set logos = {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"} %}
       {% for match in recent %}
-      <div class="match-card completed">
+      <a href="{{ url_for('match_detail', match_id=match.id) }}" class="match-card completed match-card-link">
         <div class="match-team home">
-          <div class="match-team-logo">{{ logos[match.home] }}</div>
+          <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div>
             <div class="match-team-name">{{ match.home }}</div>
             <div class="match-team-city">Home</div>
@@ -121,23 +110,22 @@
         <div class="match-center">
           <div class="match-score">
             <span class="{% if match.home_score > match.away_score %}diff-pos{% else %}loss-indicator{% endif %}">{{ match.home_score }}</span>
-            <span class="sep">–</span>
+            <span class="sep">-</span>
             <span class="{% if match.away_score > match.home_score %}diff-pos{% else %}loss-indicator{% endif %}">{{ match.away_score }}</span>
           </div>
           <div class="match-meta">{{ match.date }}</div>
         </div>
 
         <div class="match-team away">
-          <div class="match-team-logo">{{ logos[match.away] }}</div>
+          <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div>
             <div class="match-team-name">{{ match.away }}</div>
             <div class="match-team-city">Away</div>
           </div>
         </div>
-      </div>
+      </a>
       {% endfor %}
     </div>
   </section>
-
 </div>
 {% endblock %}

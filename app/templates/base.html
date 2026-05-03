@@ -11,20 +11,38 @@
 
 <!-- ── ANNOUNCEMENT BANNER ──────────────────────────────── -->
 {% if site_announcements %}
-<div class="announcement-banner">
+<div class="announcement-banner"
+     data-autoscroll="{{ banner_settings.banner_autoscroll if banner_settings else 'true' }}"
+     data-speed="{{ banner_settings.banner_speed if banner_settings else '5' }}">
   <div class="announcement-banner-inner">
     <span class="announcement-banner-icon">📢</span>
-    <span class="announcement-banner-text">{{ site_announcements[0].message }}</span>
+    <span class="announcement-banner-text" id="announcementPrimary">{{ site_announcements[0].message }}</span>
     {% if site_announcements|length > 1 %}
-    <span class="announcement-banner-count">+{{ site_announcements|length - 1 }} more</span>
+    <button type="button" class="announcement-banner-count" id="announcementPrev">Prev</button>
+    <button type="button" class="announcement-banner-count" id="announcementNext">Next</button>
     {% endif %}
   </div>
+  {% if site_announcements|length > 1 %}
+  <div class="announcement-banner-list" id="announcementList" style="display:none;">
+    {% for ann in site_announcements %}
+    <div class="announcement-banner-item">{{ ann.message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endif %}
 
 <!-- ── TICKER ────────────────────────────────────────────── -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-inner" id="ticker">
+    {% if site_banner_messages %}
+      {% for ann in site_banner_messages %}
+      <span class="ticker-item">{{ ann.message }}</span>
+      {% endfor %}
+      {% for ann in site_banner_messages %}
+      <span class="ticker-item">{{ ann.message }}</span>
+      {% endfor %}
+    {% else %}
     <span class="ticker-item">🏆 SEASON 1 Underway</span>
     <span class="ticker-item">⚡ Neon Wolves Lead the Conference 18–4</span>
     <span class="ticker-item">🔥 xShadowKing drops 42 pts vs Apex Surge</span>
@@ -33,6 +51,7 @@
     <span class="ticker-item">⚡ Neon Wolves Lead the Conference 18–4</span>
     <span class="ticker-item">🔥 xShadowKing drops 42 pts vs Apex Surge</span>
     <span class="ticker-item">📅 Playoffs Begin May 2nd</span>
+    {% endif %}
   </div>
 </div>
 
@@ -57,9 +76,7 @@
     <!-- LEFT: Logo + primary nav tabs -->
     <div class="nav-left">
       <a href="{{ url_for('home') }}" class="nbl-logo">
-        <div class="nbl-ball">
-          <div class="nbl-ball-text">NBL</div>
-        </div>
+          <img src="https://cdn.discordapp.com/attachments/1344274694031020084/1493596724671942786/1280px-NBL_28Australia29_logo.svg.png?ex=69f89858&is=69f746d8&hm=e5a4f813187512af8e9e5f269233e8ab87b896b0fe2db88e9d87d2c9d01de7dc&" alt="NBL Logo" class="nbl-ball">
         <div class="nbl-wordmark-wrap">
           <div class="nbl-wordmark">NBL</div>
           <div class="nbl-sub">Basketball League</div>
@@ -72,6 +89,7 @@
         <li><a href="{{ url_for('home') }}"       class="nav-tab {% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
         <li><a href="{{ url_for('standings') }}"  class="nav-tab {% if request.endpoint == 'standings' %}active{% endif %}">Standings</a></li>
         <li><a href="{{ url_for('matches') }}"    class="nav-tab {% if request.endpoint == 'matches' %}active{% endif %}">Matches</a></li>
+        <li><a href="{{ url_for('schedule') }}"   class="nav-tab {% if request.endpoint == 'schedule' %}active{% endif %}">Schedule</a></li>
         <li><a href="{{ url_for('teams') }}"      class="nav-tab {% if request.endpoint in ['teams', 'team_detail'] %}active{% endif %}">Teams</a></li>
         <li><a href="{{ url_for('statistics') }}" class="nav-tab {% if request.endpoint == 'statistics' %}active{% endif %}">Statistics</a></li>
       </ul>
@@ -121,8 +139,8 @@
 <footer class="footer">
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-brand">NBL<span>.GG</span></div>
-      <div class="footer-copy">© 2025 Roblox Basketball League · SEASON 1 · All rights reserved</div>
+      <div class="footer-brand">NATIONAL <span>BASKETBALL LEAGUE</span></div>
+      <div class="footer-copy">© 2026 National Basketball League · SEASON 1 · All rights reserved</div>
     </div>
   </div>
 </footer>
@@ -150,6 +168,46 @@
       setTimeout(() => el.remove(), 400);
     });
   }, 5000);
+
+  // Rotate announcements in the top banner
+  (function () {
+    const banner = document.querySelector(".announcement-banner");
+    if (!banner) return;
+
+    const primary = document.getElementById("announcementPrimary");
+    const prevBtn = document.getElementById("announcementPrev");
+    const nextBtn = document.getElementById("announcementNext");
+    const list = document.getElementById("announcementList");
+    const items = list ? Array.from(list.querySelectorAll(".announcement-banner-item")) : [];
+    let idx = 0;
+
+    if (!primary || items.length === 0) return;
+
+    const render = () => {
+      primary.textContent = items[idx].textContent;
+    };
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        idx = (idx - 1 + items.length) % items.length;
+        render();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        idx = (idx + 1) % items.length;
+        render();
+      });
+    }
+
+    if ((banner.dataset.autoscroll || "true") === "true" && items.length > 1) {
+      const speed = Math.max(2, parseInt(banner.dataset.speed || "5", 10) || 5) * 1000;
+      setInterval(() => {
+        idx = (idx + 1) % items.length;
+        render();
+      }, speed);
+    }
+  })();
 </script>
 {% block scripts %}{% endblock %}
 </body>

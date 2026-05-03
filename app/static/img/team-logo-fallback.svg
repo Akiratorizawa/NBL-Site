@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Team logo fallback">
+  <rect width="160" height="160" rx="18" fill="#1f1f1f"/>
+  <circle cx="80" cy="80" r="48" fill="#ff7a00"/>
+  <path d="M80 32v96M32 80h96M46 48c22 18 46 46 66 64M114 48c-22 18-46 46-66 64" stroke="#101010" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="80" cy="80" r="48" stroke="#101010" stroke-width="7" fill="none"/>
+</svg>

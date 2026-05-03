@@ -1,7 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Matches — RBL.GG{% endblock %}
+{% block title %}Results - RBL.GG{% endblock %}
 
 {% block content %}
+{% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
 <div class="container">
 
   <div class="page-header">
@@ -9,122 +10,55 @@
       <div>
         <h1 class="page-title">Mat<span>ches</span></h1>
       </div>
-      <div class="page-meta">SEASON 1 · {{ upcoming|length }} upcoming · {{ completed|length }} completed</div>
+      <div class="page-meta">SEASON 1 | {{ completed|length }} completed</div>
     </div>
   </div>
 
   <section class="section">
-
-    {% set logos = {"Neon Wolves":"🐺","Apex Surge":"⚡","Ghost Protocol":"👻","Iron Circuit":"⚙️","Solar Wraith":"☀️","Cryo Strike":"❄️","Rogue Signal":"📡","Dark Matter":"🌑"} %}
-
-    <div class="tab-bar">
-      <button class="tab-btn active" data-tab="upcoming">Upcoming ({{ upcoming|length }})</button>
-      <button class="tab-btn" data-tab="completed">Results ({{ completed|length }})</button>
-    </div>
-
-    <!-- UPCOMING -->
-    <div class="tab-panel active" id="tab-upcoming">
-      {% if upcoming %}
-        {% set prev_stage = namespace(val="") %}
-        <div class="match-grid">
-          {% for match in upcoming %}
-            {% if match.stage != prev_stage.val %}
-              <div class="week-label">{{ match.stage }}</div>
-              {% set prev_stage.val = match.stage %}
-            {% endif %}
-            <div class="match-card upcoming">
-              <div class="match-team home">
-                <div class="match-team-logo">{{ logos[match.home] }}</div>
-                <div>
-                  <div class="match-stage upcoming">{{ match.stage }}</div>
-                  <div class="match-team-name">{{ match.home }}</div>
-                  <div class="match-team-city">Home</div>
-                </div>
-              </div>
-
-              <div class="match-center">
-                <span class="badge badge-upcoming">Scheduled</span>
-                <div class="match-vs" style="margin-top:8px;">VS</div>
-                <div class="match-meta">{{ match.date }}</div>
-              </div>
-
-              <div class="match-team away">
-                <div class="match-team-logo">{{ logos[match.away] }}</div>
-                <div>
-                  <div class="match-stage upcoming" style="text-align:right;">&nbsp;</div>
-                  <div class="match-team-name">{{ match.away }}</div>
-                  <div class="match-team-city" style="text-align:right;">Away</div>
-                </div>
+    {% if completed %}
+      {% set prev_stage = namespace(val="") %}
+      <div class="match-grid">
+        {% for match in completed %}
+          {% if match.stage != prev_stage.val %}
+            <div class="week-label"><a href="{{ url_for('stage_detail', stage_name=match.stage) }}">{{ match.stage }}</a></div>
+            {% set prev_stage.val = match.stage %}
+          {% endif %}
+          <a href="{{ url_for('match_detail', match_id=match.id) }}" class="match-card completed match-card-link">
+            <div class="match-team home">
+              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <div>
+                <div class="match-team-name">{{ match.home }}</div>
+                <div class="match-team-city">Home</div>
               </div>
             </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="empty">No upcoming matches scheduled.</div>
-      {% endif %}
-    </div>
 
-    <!-- COMPLETED -->
-    <div class="tab-panel" id="tab-completed">
-      {% if completed %}
-        {% set prev_stage = namespace(val="") %}
-        <div class="match-grid">
-          {% for match in completed %}
-            {% if match.stage != prev_stage.val %}
-              <div class="week-label">{{ match.stage }}</div>
-              {% set prev_stage.val = match.stage %}
-            {% endif %}
-            <div class="match-card completed">
-              <div class="match-team home">
-                <div class="match-team-logo">{{ logos[match.home] }}</div>
-                <div>
-                  <div class="match-team-name">{{ match.home }}</div>
-                  <div class="match-team-city">Home</div>
-                </div>
+            <div class="match-center">
+              <div class="match-score">
+                <span class="{% if match.home_score > match.away_score %}diff-pos{% else %}loss-indicator{% endif %}">
+                  {{ match.home_score }}
+                </span>
+                <span class="sep">-</span>
+                <span class="{% if match.away_score > match.home_score %}diff-pos{% else %}loss-indicator{% endif %}">
+                  {{ match.away_score }}
+                </span>
               </div>
+              <div class="match-meta">{{ match.date }}</div>
+              <span class="badge badge-done" style="margin-top:6px;">Final</span>
+            </div>
 
-              <div class="match-center">
-                <div class="match-score">
-                  <span class="{% if match.home_score > match.away_score %}diff-pos{% else %}loss-indicator{% endif %}">
-                    {{ match.home_score }}
-                  </span>
-                  <span class="sep">–</span>
-                  <span class="{% if match.away_score > match.home_score %}diff-pos{% else %}loss-indicator{% endif %}">
-                    {{ match.away_score }}
-                  </span>
-                </div>
-                <div class="match-meta">{{ match.date }}</div>
-                <span class="badge badge-done" style="margin-top:6px;">Final</span>
-              </div>
-
-              <div class="match-team away">
-                <div class="match-team-logo">{{ logos[match.away] }}</div>
-                <div>
-                  <div class="match-team-name">{{ match.away }}</div>
-                  <div class="match-team-city" style="text-align:right;">Away</div>
-                </div>
+            <div class="match-team away">
+              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <div>
+                <div class="match-team-name">{{ match.away }}</div>
+                <div class="match-team-city" style="text-align:right;">Away</div>
               </div>
             </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="empty">No completed matches yet.</div>
-      {% endif %}
-    </div>
-
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">No completed matches yet.</div>
+    {% endif %}
   </section>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-    });
-  });
-</script>
 {% endblock %}

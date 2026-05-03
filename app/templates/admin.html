@@ -4,16 +4,13 @@
 {% block content %}
 <div class="container">
 
-  <!-- PAGE HEADER -->
   <div class="page-header">
     <div class="page-header-inner">
-      <div>
-        <h1 class="page-title">Admin <span>Panel</span></h1>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div><h1 class="page-title">Admin <span>Panel</span></h1></div>
+      <div style="display:flex;align-items:center;gap:12px;">
         <img src="{{ current_user.avatar }}" alt="" class="nav-avatar" style="width:36px;height:36px;" />
         <div>
-          <div style="font-weight:700; font-size:14px;">{{ current_user.username }}</div>
+          <div style="font-weight:700;font-size:14px;">{{ current_user.username }}</div>
           <div class="page-meta">League Administrator</div>
         </div>
         <span class="badge badge-upcoming" style="margin-left:8px;">Admin</span>
@@ -21,38 +18,34 @@
     </div>
   </div>
 
-  <!-- ADMIN GRID -->
   <div class="admin-grid">
 
-    <!-- ── A: ANNOUNCEMENTS ──────────────────────────── -->
+    <!-- ── A: MANAGE ANNOUNCEMENTS ───────────────────────── -->
     <div class="admin-card">
       <div class="admin-card-header">
         <div class="admin-card-icon">📢</div>
         <div>
-          <div class="admin-card-title">Announcements</div>
-          <div class="admin-card-sub">Post a banner message visible to all visitors</div>
+          <div class="admin-card-title">Manage Announcements</div>
+          <div class="admin-card-sub">Add and remove top page announcements</div>
         </div>
       </div>
-
       <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
         <input type="hidden" name="action" value="add_announcement" />
         <div class="form-group">
-          <label class="form-label">New Announcement</label>
-          <textarea name="message" class="form-input form-textarea"
-            placeholder="e.g. SEASON 1 playoffs begin May 2nd — watch the livestream!" rows="3" required></textarea>
+          <label class="form-label">Message</label>
+          <textarea name="message" class="form-input form-textarea" rows="3"
+            placeholder="Season 4 playoffs begin May 2nd…" required></textarea>
         </div>
         <button type="submit" class="btn btn-primary btn-sm">Post Announcement</button>
       </form>
-
-      <!-- Existing announcements -->
       {% if announcements %}
       <div class="admin-list">
-        <div class="admin-list-label">Active Announcements ({{ announcements|length }})</div>
+        <div class="admin-list-label">Announcements ({{ announcements|length }})</div>
         {% for ann in announcements %}
-        <div class="admin-list-item">
+        <div class="admin-list-item" style="align-items:center;gap:10px;">
           <div class="admin-list-item-body">
             <div class="admin-list-msg">{{ ann.message }}</div>
-            <div class="admin-list-meta">Posted {{ ann.created }}</div>
+            <div class="admin-list-meta">{{ ann.created_at }}</div>
           </div>
           <form method="POST" action="{{ url_for('admin') }}" style="flex-shrink:0;">
             <input type="hidden" name="action" value="delete_announcement" />
@@ -63,70 +56,150 @@
         {% endfor %}
       </div>
       {% else %}
-      <div class="admin-empty">No announcements posted yet.</div>
+      <div class="admin-empty">No announcements yet.</div>
       {% endif %}
     </div>
 
-    <!-- ── B: MATCH RESULTS ──────────────────────────── -->
+    <!-- ── SLIDING BANNER MANAGEMENT ─────────────────────── -->
     <div class="admin-card">
       <div class="admin-card-header">
-        <div class="admin-card-icon">🏀</div>
+        <div class="admin-card-icon">📰</div>
         <div>
-          <div class="admin-card-title">Post Match Result</div>
-          <div class="admin-card-sub">Add a completed match to the schedule</div>
+          <div class="admin-card-title">Sliding Banner Management</div>
+          <div class="admin-card-sub">Manage messages in the moving ticker</div>
+        </div>
+      </div>
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="add_banner_announcement" />
+        <div class="form-group">
+          <label class="form-label">Banner Message</label>
+          <input type="text" name="message" class="form-input" placeholder="Playoffs begin Friday at 8PM" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Add Banner Message</button>
+      </form>
+      {% if banner_announcements %}
+      <div class="admin-list">
+        <div class="admin-list-label">Banner Messages ({{ banner_announcements|length }})</div>
+        {% for ann in banner_announcements %}
+        <div class="admin-list-item" style="align-items:center;gap:10px;">
+          <div class="admin-list-item-body">
+            <div class="admin-list-msg">{{ ann.message }}</div>
+            <div class="admin-list-meta">{{ ann.created_at }}</div>
+          </div>
+          <form method="POST" action="{{ url_for('admin') }}" style="flex-shrink:0;">
+            <input type="hidden" name="action" value="delete_banner_announcement" />
+            <input type="hidden" name="banner_announcement_id" value="{{ ann.id }}" />
+            <button type="submit" class="btn-icon-delete" title="Delete">✕</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="admin-empty">No banner messages yet.</div>
+      {% endif %}
+    </div>
+
+    <!-- ── ROSTER MANAGEMENT ──────────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">🧾</div>
+        <div>
+          <div class="admin-card-title">Roster Management</div>
+          <div class="admin-card-sub">Add, remove, and transfer players</div>
         </div>
       </div>
 
       <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
-        <input type="hidden" name="action" value="add_match" />
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Home Team</label>
-            <select name="home_team" class="form-input form-select" required>
-              <option value="">Select team…</option>
-              {% for t in teams %}
-              <option value="{{ t }}">{{ t }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Away Team</label>
-            <select name="away_team" class="form-input form-select" required>
-              <option value="">Select team…</option>
-              {% for t in teams %}
-              <option value="{{ t }}">{{ t }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Home Score</label>
-            <input type="number" name="home_score" class="form-input" min="0" max="999" placeholder="0" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Away Score</label>
-            <input type="number" name="away_score" class="form-input" min="0" max="999" placeholder="0" required />
-          </div>
-        </div>
-
+        <input type="hidden" name="action" value="add_player" />
+        <div class="admin-list-label">Add Player</div>
         <div class="form-group">
-          <label class="form-label">Stage / Week Label</label>
-          <input type="text" name="stage" class="form-input" placeholder="e.g. Week 13" value="Week 13" />
+          <label class="form-label">Team</label>
+          <select name="team_id" class="form-input form-select" required>
+            <option value="">Select team…</option>
+            {% for t in teams %}
+            <option value="{{ t.id }}">{{ t.name }} ({{ t.abbr }})</option>
+            {% endfor %}
+          </select>
         </div>
-
-        <button type="submit" class="btn btn-primary btn-sm">Add Result</button>
+        <div class="form-group">
+          <label class="form-label">Player Name</label>
+          <input type="text" name="name" class="form-input" placeholder="Player name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Position</label>
+          <select name="position" class="form-input form-select" required>
+            <option value="">Select position…</option>
+            <option value="PG">PG</option>
+            <option value="SG">SG</option>
+            <option value="SF">SF</option>
+            <option value="PF">PF</option>
+            <option value="C">C</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Add Player</button>
       </form>
 
-      <!-- Recent results -->
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="remove_player" />
+        <div class="admin-list-label">Remove Player</div>
+        <div class="form-group">
+          <label class="form-label">Player</label>
+          <select name="player_id" class="form-input form-select" required>
+            <option value="">Select player…</option>
+            {% for t in teams %}
+            <optgroup label="{{ t.name }} ({{ t.abbr }})">
+              {% for p in players if p.team_id == t.id %}
+              <option value="{{ p.id }}">{{ p.name }} ({{ p.position }})</option>
+              {% endfor %}
+            </optgroup>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-sm" style="border-color:#ff5757;color:#ff5757;">Remove Player</button>
+      </form>
+    </div>
+
+    <!-- ── C: PLAYER TRANSFER ─────────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">👤</div>
+        <div>
+          <div class="admin-card-title">Player Transfer</div>
+          <div class="admin-card-sub">Move a player to a different team</div>
+        </div>
+      </div>
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="transfer_player" />
+        <div class="form-group">
+          <label class="form-label">Player</label>
+          <select name="player_id" class="form-input form-select" required>
+            <option value="">Select player…</option>
+            {% for p in players %}
+            <option value="{{ p.id }}">{{ p.name }} ({{ p.team_abbr }} · {{ p.position }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transfer To</label>
+          <select name="new_team_id" class="form-input form-select" required>
+            <option value="">Select team…</option>
+            {% for t in teams %}
+            <option value="{{ t.id }}">{{ t.name }} ({{ t.abbr }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Transfer Player</button>
+      </form>
+
       {% if recent_matches %}
-      <div class="admin-list">
+      <div class="admin-list" style="margin-top:4px;">
         <div class="admin-list-label">Recent Results</div>
         {% for m in recent_matches %}
-        <div class="admin-list-item" style="justify-content:space-between;">
-          <div style="font-size:13px; font-weight:600;">{{ m.home }} <span style="color:var(--accent);">{{ m.home_score }}</span> – <span style="color:var(--accent);">{{ m.away_score }}</span> {{ m.away }}</div>
+        <div class="admin-list-item" style="flex-direction:column;gap:2px;align-items:flex-start;">
+          <div style="font-size:13px;font-weight:600;">
+            {{ m.home }} <span style="color:var(--accent);">{{ m.home_score }}</span>
+            – <span style="color:var(--accent);">{{ m.away_score }}</span> {{ m.away }}
+          </div>
           <div class="admin-list-meta">{{ m.date }} · {{ m.stage }}</div>
         </div>
         {% endfor %}
@@ -134,82 +207,438 @@
       {% endif %}
     </div>
 
-    <!-- ── C: PLAYER MANAGEMENT ──────────────────────── -->
+    <!-- ── BANNER SETTINGS ─────────────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">⚙️</div>
+        <div>
+          <div class="admin-card-title">Announcement Banner Settings</div>
+          <div class="admin-card-sub">Control rotation and timing</div>
+        </div>
+      </div>
+      <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+        <input type="hidden" name="action" value="save_banner_settings" />
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" name="banner_autoscroll" {% if banner_settings.banner_autoscroll == 'true' %}checked{% endif %} />
+            Auto-rotate announcements
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rotation Speed (seconds)</label>
+          <input type="number" min="2" max="30" name="banner_speed" class="form-input"
+                 value="{{ banner_settings.banner_speed or '5' }}" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Save Banner Settings</button>
+      </form>
+    </div>
+
     <div class="admin-card admin-card-wide">
       <div class="admin-card-header">
-        <div class="admin-card-icon">👤</div>
+        <div class="admin-card-icon">📆</div>
         <div>
-          <div class="admin-card-title">Player Management</div>
-          <div class="admin-card-sub">Transfer a player to a different team</div>
+          <div class="admin-card-title">Schedule Management</div>
+          <div class="admin-card-sub">Set the active week and update schedule game status</div>
         </div>
       </div>
 
+      <div class="admin-schedule-grid">
+        <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+          <input type="hidden" name="action" value="mark_schedule_completed" />
+          <div class="admin-list-label">Mark Game as Completed</div>
+          <div class="form-group">
+            <label class="form-label">Game</label>
+            <select name="schedule_game_id" class="form-input form-select" required>
+              <option value="">Select game...</option>
+              {% for game in schedule_games %}
+              <option value="{{ game.id }}" {% if game.status == 'completed' %}disabled{% endif %}>
+                {{ game.week }} - {{ game.home_team }} vs {{ game.away_team }} ({{ game.status }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">Mark Completed</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
+          <input type="hidden" name="action" value="set_current_week" />
+          <div class="admin-list-label">Set Current Week</div>
+          <div class="form-group">
+            <label class="form-label">Week</label>
+            <select name="current_week" class="form-input form-select" required>
+              <option value="">Select week...</option>
+              {% for week in schedule_weeks %}
+              <option value="{{ week }}" {% if week == current_week %}selected{% endif %}>{{ week }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Scheduling Deadline</label>
+            <input type="text" name="current_week_deadline" class="form-input"
+                   value="{{ current_week_deadline }}" placeholder="Deadline, Month 1st" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">Save Current Week</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── CREATE TEAM ─────────────────────────────────────── -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">🏟️</div>
+        <div>
+          <div class="admin-card-title">Create Team</div>
+          <div class="admin-card-sub">Add a new franchise and optional starter roster</div>
+        </div>
+      </div>
       <form method="POST" action="{{ url_for('admin') }}" class="admin-form">
-        <input type="hidden" name="action" value="transfer_player" />
-        <div class="form-row form-row-3">
+        <input type="hidden" name="action" value="create_team" />
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Player</label>
-            <select name="player_name" class="form-input form-select" required>
-              <option value="">Select player…</option>
-              {% for p in players %}
-              <option value="{{ p.name }}">{{ p.name }} ({{ p.team_abbr }} · {{ p.pos }})</option>
-              {% endfor %}
-            </select>
+            <label class="form-label">Team Name</label>
+            <input type="text" name="team_name" class="form-input" placeholder="Neon Wolves" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Transfer To</label>
-            <select name="new_team" class="form-input form-select" required>
-              <option value="">Select new team…</option>
-              {% for t in teams %}
-              <option value="{{ t }}">{{ t }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group" style="display:flex; align-items:flex-end;">
-            <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Transfer Player</button>
+            <label class="form-label">City</label>
+            <input type="text" name="city" class="form-input" placeholder="New York" required />
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Abbreviation</label>
+            <input type="text" name="abbreviation" class="form-input" maxlength="5" placeholder="NW" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Color</label>
+            <input type="text" name="primary_color" class="form-input" value="#ff7a00" placeholder="#ff7a00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logo URL (optional)</label>
+          <input type="url" name="logo_url" class="form-input" placeholder="https://example.com/logo.png" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Initial Roster (optional)</label>
+          <textarea name="initial_roster" class="form-input form-textarea" rows="4"
+                    placeholder="Player One, PG&#10;Player Two, SG&#10;Player Three, C"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Create Team</button>
       </form>
+    </div>
 
-      <!-- Player roster table -->
-      <div class="admin-list" style="margin-top:20px;">
-        <div class="admin-list-label">Current Roster ({{ players|length }} players)</div>
-        <div style="overflow-x:auto;">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Player</th>
-                <th>Team</th>
-                <th>Pos</th>
-                <th class="num">PPG</th>
-                <th class="num">APG</th>
-                <th class="num">RPG</th>
-                <th class="num">Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for p in players | sort(attribute='ppg', reverse=True) %}
-              <tr>
-                <td style="font-weight:700;">{{ p.name }}</td>
-                <td>
-                  <span class="admin-team-tag">{{ p.team_abbr }}</span>
-                  <span style="font-size:12px; color:var(--text-3); margin-left:6px;">{{ p.team }}</span>
-                </td>
-                <td><span class="player-pos">{{ p.pos }}</span></td>
-                <td class="num" style="color:var(--accent); font-weight:700;">{{ p.ppg }}</td>
-                <td class="num" style="color:var(--text-2);">{{ p.apg }}</td>
-                <td class="num" style="color:var(--text-2);">{{ p.rpg }}</td>
-                <td class="num">
-                  <span class="admin-rating">{{ p.mvp_score }}</span>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+    <!-- ── B: MATCH + BOX-SCORE ENTRY ────────────────────── -->
+    <div class="admin-card admin-card-wide">
+      <div class="admin-card-header">
+        <div class="admin-card-icon">🏀</div>
+        <div>
+          <div class="admin-card-title">Post Match Result + Box Score</div>
+          <div class="admin-card-sub">
+            Enter match details, then add individual player stat lines for both teams
+          </div>
         </div>
       </div>
+
+      <form method="POST" action="{{ url_for('admin') }}" id="matchForm" class="admin-form" style="border-bottom:none;">
+        <input type="hidden" name="action" value="add_match" />
+
+        <!-- Match header fields -->
+        <div class="boxscore-match-header">
+          <div class="form-group">
+            <label class="form-label">Home Team</label>
+            <select name="home_team_id" id="homeTeamSelect" class="form-input form-select" required>
+              <option value="">Select…</option>
+              {% for t in teams %}
+              <option value="{{ t.id }}" data-color="{{ t.color }}">{{ t.name }} ({{ t.abbr }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Home Score</label>
+            <input type="number" name="home_score" class="form-input" min="0" max="999" placeholder="0" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Away Team</label>
+            <select name="away_team_id" id="awayTeamSelect" class="form-input form-select" required>
+              <option value="">Select…</option>
+              {% for t in teams %}
+              <option value="{{ t.id }}" data-color="{{ t.color }}">{{ t.name }} ({{ t.abbr }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Away Score</label>
+            <input type="number" name="away_score" class="form-input" min="0" max="999" placeholder="0" required />
+          </div>
+        </div>
+
+        <div class="form-row" style="max-width:600px;">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="text" name="date" class="form-input"
+              placeholder="Apr 22, 2025" value="{{ '' }}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stage / Week</label>
+            <input type="text" name="stage" class="form-input" placeholder="Week 13" value="Week 13" />
+          </div>
+        </div>
+
+        <!-- ── HOME TEAM BOX SCORE ──────────────────────── -->
+        <div class="boxscore-section" id="homeSection">
+          <div class="boxscore-section-header" id="homeHeader">
+            <span class="boxscore-team-dot" id="homeTeamDot"></span>
+            <span id="homeTeamLabel">Home Team</span> — Player Stats
+          </div>
+          <div class="boxscore-table-wrap">
+            <table class="boxscore-table">
+              <colgroup>
+                <col class="col-player" />
+                <col span="14" class="col-stat" />
+                <col class="col-action" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col-player">Player</th>
+                  <th>PTS</th>
+                  <th>FGM</th><th>FGA</th>
+                  <th>3PM</th><th>3PA</th>
+                  <th>FTM</th><th>FTA</th>
+                  <th>AST</th><th>REB</th><th>STL</th><th>BLK</th>
+                  <th>TOV</th><th>FLS</th><th>+/-</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="homePlayerRows"></tbody>
+            </table>
+          </div>
+          <div class="boxscore-actions">
+            <button type="button" class="btn-add-row" onclick="addPlayerRow('home')">
+              + Add Player
+            </button>
+            <button type="button" class="btn-add-row btn-add-walkon" onclick="addWalkonRow('home')">
+              + Add Walk-on
+            </button>
+          </div>
+          <div class="boxscore-table-wrap boxscore-walkon-wrap">
+            <table class="boxscore-table boxscore-walkon-table">
+              <colgroup>
+                <col class="col-player" />
+                <col span="14" class="col-stat" />
+                <col class="col-action" />
+              </colgroup>
+              <tbody id="homeWalkonRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── AWAY TEAM BOX SCORE ──────────────────────── -->
+        <div class="boxscore-section" id="awaySection">
+          <div class="boxscore-section-header" id="awayHeader">
+            <span class="boxscore-team-dot" id="awayTeamDot"></span>
+            <span id="awayTeamLabel">Away Team</span> — Player Stats
+          </div>
+          <div class="boxscore-table-wrap">
+            <table class="boxscore-table">
+              <colgroup>
+                <col class="col-player" />
+                <col span="14" class="col-stat" />
+                <col class="col-action" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="col-player">Player</th>
+                  <th>PTS</th>
+                  <th>FGM</th><th>FGA</th>
+                  <th>3PM</th><th>3PA</th>
+                  <th>FTM</th><th>FTA</th>
+                  <th>AST</th><th>REB</th><th>STL</th><th>BLK</th>
+                  <th>TOV</th><th>FLS</th><th>+/-</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="awayPlayerRows"></tbody>
+            </table>
+          </div>
+          <div class="boxscore-actions">
+            <button type="button" class="btn-add-row" onclick="addPlayerRow('away')">
+              + Add Player
+            </button>
+            <button type="button" class="btn-add-row btn-add-walkon" onclick="addWalkonRow('away')">
+              + Add Walk-on
+            </button>
+          </div>
+          <div class="boxscore-table-wrap boxscore-walkon-wrap">
+            <table class="boxscore-table boxscore-walkon-table">
+              <colgroup>
+                <col class="col-player" />
+                <col span="14" class="col-stat" />
+                <col class="col-action" />
+              </colgroup>
+              <tbody id="awayWalkonRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="padding:20px 24px 24px;">
+          <button type="submit" class="btn btn-primary">
+            💾 Save Match + Box Score
+          </button>
+        </div>
+
+      </form>
     </div>
 
   </div><!-- /admin-grid -->
 </div>
+
+<!-- ── JAVASCRIPT ──────────────────────────────────────────── -->
+<script>
+// Players keyed by team_id (injected from Flask)
+const PLAYERS_BY_TEAM = {{ players_by_team_json | safe }};
+
+const rowCounters = { home: 0, away: 0 };
+
+// Stat fields in order matching the table headers
+const STAT_FIELDS = [
+  "pts","fgm","fga","three_pm","three_pa","ftm","fta",
+  "ast","reb","stl","blk","tov","fls","plus_minus"
+];
+
+// Update team label + dot color when a team select changes
+document.getElementById("homeTeamSelect").addEventListener("change", function() {
+  updateTeamHeader("home", this);
+  refreshRows("home");
+});
+document.getElementById("awayTeamSelect").addEventListener("change", function() {
+  updateTeamHeader("away", this);
+  refreshRows("away");
+});
+
+function updateTeamHeader(side, select) {
+  const opt   = select.options[select.selectedIndex];
+  const label = document.getElementById(side + "TeamLabel");
+  const dot   = document.getElementById(side + "TeamDot");
+  const color = opt.dataset.color || "var(--accent)";
+  label.textContent = opt.text || (side.charAt(0).toUpperCase() + side.slice(1) + " Team");
+  dot.style.background = color;
+  dot.style.boxShadow  = `0 0 8px ${color}88`;
+}
+
+// Rebuild existing rows' player dropdowns when team changes
+function refreshRows(side) {
+  const tbody = document.getElementById(side + "PlayerRows");
+  tbody.querySelectorAll(".player-select").forEach(sel => {
+    const currentVal = sel.value;
+    rebuildPlayerSelect(sel, side);
+    sel.value = currentVal; // keep selection if still valid
+  });
+}
+
+// Build a <select> populated with players for the chosen team
+function rebuildPlayerSelect(sel, side) {
+  const teamSelect = document.getElementById(side + "TeamSelect");
+  const teamId = teamSelect ? teamSelect.value : "";
+  const players = PLAYERS_BY_TEAM[teamId] || [];
+  sel.innerHTML = '<option value="">— player —</option>';
+  players.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value       = p.id;
+    opt.textContent = `${p.name} (${p.position})`;
+    sel.appendChild(opt);
+  });
+}
+
+function appendStatCells(tr, side, idx) {
+  STAT_FIELDS.forEach(field => {
+    const td = document.createElement("td");
+    const input = document.createElement("input");
+    input.type = "number";
+    input.name = `${side}_player[${idx}][${field}]`;
+    input.className = "form-input stat-input";
+    input.value = "0";
+    input.min = field === "plus_minus" ? "-99" : "0";
+    input.max = "999";
+    input.placeholder = "0";
+    td.appendChild(input);
+    tr.appendChild(td);
+  });
+}
+
+function appendRemoveCell(tr) {
+  const tdDel = document.createElement("td");
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn-icon-delete";
+  btn.textContent = "x";
+  btn.onclick = () => tr.remove();
+  tdDel.appendChild(btn);
+  tr.appendChild(tdDel);
+}
+
+function createPlayerRow(side) {
+  const idx   = rowCounters[side]++;
+  const tr    = document.createElement("tr");
+  tr.className = "boxscore-row";
+
+  // Player dropdown cell
+  const tdPlayer = document.createElement("td");
+  tdPlayer.className = "col-player";
+  const sel = document.createElement("select");
+  sel.name      = `${side}_player[${idx}][player_id]`;
+  sel.className = "form-input form-select player-select";
+  sel.required  = false;
+  rebuildPlayerSelect(sel, side);
+  tdPlayer.appendChild(sel);
+  tr.appendChild(tdPlayer);
+
+  appendStatCells(tr, side, idx);
+  appendRemoveCell(tr);
+
+  return tr;
+}
+
+function createWalkonRow(side) {
+  const idx = rowCounters[side]++;
+  const tr = document.createElement("tr");
+  tr.className = "boxscore-row walkon-row";
+
+  const tdPlayer = document.createElement("td");
+  tdPlayer.className = "col-player";
+
+  const marker = document.createElement("input");
+  marker.type = "hidden";
+  marker.name = `${side}_player[${idx}][player_id]`;
+  marker.value = "__walkon__";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = `${side}_player[${idx}][walkon_name]`;
+  input.className = "form-input walkon-name-input";
+  input.placeholder = "Walk-on name";
+
+  tdPlayer.appendChild(marker);
+  tdPlayer.appendChild(input);
+  tr.appendChild(tdPlayer);
+
+  appendStatCells(tr, side, idx);
+  appendRemoveCell(tr);
+
+  return tr;
+}
+
+function addPlayerRow(side) {
+  document.getElementById(side + "PlayerRows").appendChild(createPlayerRow(side));
+}
+
+function addWalkonRow(side) {
+  document.getElementById(side + "WalkonRows").appendChild(createWalkonRow(side));
+}
+
+function seedBoxscoreRows(side) {
+  for (let i = 0; i < 5; i++) addPlayerRow(side);
+}
+
+seedBoxscoreRows("home");
+seedBoxscoreRows("away");
+</script>
 {% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}{{ player.name }} - Player Profile{% endblock %}
+
+{% block content %}
+<div class="player-profile-page" style="--team-color: {{ player.team_color or '#ff7a00' }};">
+  {% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
+  <div class="container">
+    <a href="{{ url_for('team_detail', team_id=player.team_id) }}" class="player-back-link">Back to {{ player.team_name }}</a>
+
+    <header class="player-hero-card">
+      <div class="player-hero-accent"></div>
+      <div class="player-hero-main">
+        <div class="player-team-mark">
+          <img src="{{ player.team_logo_url or fallback_logo }}" alt="{{ player.team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+        </div>
+
+        <div class="player-identity">
+          <div class="player-kicker">{{ player.team_name }} | {{ player.team_abbr }}</div>
+          <h1>{{ player.name }}</h1>
+          <div class="player-meta-row">
+            <span class="player-position">{{ player.position }}</span>
+            <span>{{ season_totals.games_played }} games played</span>
+          </div>
+        </div>
+
+        <div class="player-jersey-tag">
+          <span>{{ player.position }}</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="player-stats-strip" aria-label="Key player averages">
+      <div class="player-highlight-stat">
+        <strong>{{ averages.ppg }}</strong>
+        <span>PPG</span>
+      </div>
+      <div class="player-highlight-stat">
+        <strong>{{ averages.apg }}</strong>
+        <span>APG</span>
+      </div>
+      <div class="player-highlight-stat">
+        <strong>{{ averages.rpg }}</strong>
+        <span>RPG</span>
+      </div>
+    </section>
+
+    <section class="player-card-section">
+      <div class="player-section-header">
+        <div>
+          <p>Season Snapshot</p>
+          <h2>Season Totals</h2>
+        </div>
+      </div>
+      <div class="player-table-wrap">
+        <table class="player-stats-table">
+          <thead>
+            <tr>
+              <th class="num">PTS</th>
+              <th class="num">FGM</th>
+              <th class="num">FGA</th>
+              <th class="num">3PM</th>
+              <th class="num">3PA</th>
+              <th class="num">FTM</th>
+              <th class="num">FTA</th>
+              <th class="num">AST</th>
+              <th class="num">REB</th>
+              <th class="num">STL</th>
+              <th class="num">BLK</th>
+              <th class="num">TOV</th>
+              <th class="num">FLS</th>
+              <th class="num">+/-</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">{{ season_totals.pts }}</td>
+              <td class="num">{{ season_totals.fgm }}</td>
+              <td class="num">{{ season_totals.fga }}</td>
+              <td class="num">{{ season_totals.three_pm }}</td>
+              <td class="num">{{ season_totals.three_pa }}</td>
+              <td class="num">{{ season_totals.ftm }}</td>
+              <td class="num">{{ season_totals.fta }}</td>
+              <td class="num">{{ season_totals.ast }}</td>
+              <td class="num">{{ season_totals.reb }}</td>
+              <td class="num">{{ season_totals.stl }}</td>
+              <td class="num">{{ season_totals.blk }}</td>
+              <td class="num">{{ season_totals.tov }}</td>
+              <td class="num">{{ season_totals.fls }}</td>
+              <td class="num">{{ season_totals.plus_minus }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="player-card-section">
+      <div class="player-section-header">
+        <div>
+          <p>Box Scores</p>
+          <h2>Game Log</h2>
+        </div>
+        <span>Full stat line by match</span>
+      </div>
+      <div class="player-table-wrap player-game-log-wrap">
+        <table class="player-stats-table player-game-log-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Opponent</th>
+              <th>Date</th>
+              <th class="num">PTS</th>
+              <th class="num">FGM</th>
+              <th class="num">FGA</th>
+              <th class="num">3PM</th>
+              <th class="num">3PA</th>
+              <th class="num">FTM</th>
+              <th class="num">FTA</th>
+              <th class="num">AST</th>
+              <th class="num">REB</th>
+              <th class="num">STL</th>
+              <th class="num">BLK</th>
+              <th class="num">TOV</th>
+              <th class="num">FLS</th>
+              <th class="num">+/-</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for g in game_log %}
+            {% set is_home_team = g.home_team == player.team_name %}
+            {% set opponent = g.away_team if is_home_team else g.home_team %}
+            <tr>
+              <td>
+                <div class="game-opponent">{{ g.display_name }}</div>
+                {% if g.is_walkon %}
+                <div class="game-subline">Walk-on</div>
+                {% endif %}
+              </td>
+              <td>
+                <div class="game-opponent">vs {{ opponent }}</div>
+                <div class="game-subline">{{ g.stage }} | {{ g.home_score }}-{{ g.away_score }}</div>
+              </td>
+              <td class="game-date">{{ g.date }}</td>
+              <td class="num stat-main">{{ g.pts }}</td>
+              <td class="num">{{ g.fgm }}</td>
+              <td class="num">{{ g.fga }}</td>
+              <td class="num">{{ g.three_pm }}</td>
+              <td class="num">{{ g.three_pa }}</td>
+              <td class="num">{{ g.ftm }}</td>
+              <td class="num">{{ g.fta }}</td>
+              <td class="num">{{ g.ast }}</td>
+              <td class="num">{{ g.reb }}</td>
+              <td class="num">{{ g.stl }}</td>
+              <td class="num">{{ g.blk }}</td>
+              <td class="num">{{ g.tov }}</td>
+              <td class="num">{{ g.fls }}</td>
+              <td class="num">{{ g.plus_minus }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="17" class="player-empty-row">No games recorded for this player yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

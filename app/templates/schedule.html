@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Schedule - NBL.GG{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <h1 class="page-title">Sched<span>ule</span></h1>
+      </div>
+      <div class="page-meta">
+        Current: {{ current_week }}{% if current_week_deadline %} | Deadline: {{ current_week_deadline }}{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    {% if schedule_by_week %}
+    <div class="schedule-grid">
+      {% for week, games in schedule_by_week.items() %}
+      <section class="schedule-week {% if week == current_week %}current{% endif %}">
+        <div class="schedule-week-header">
+          <div>
+            <h2>{{ week }}</h2>
+            {% if week == current_week and current_week_deadline %}
+            <p>Deadline: {{ current_week_deadline }}</p>
+            {% endif %}
+          </div>
+          {% if week == current_week %}
+          <span class="badge badge-upcoming">Current Week</span>
+          {% endif %}
+        </div>
+
+        <div class="schedule-games">
+          {% for game in games %}
+          {% if game.status == "completed" and game.match_id %}
+          <a href="{{ url_for('match_detail', match_id=game.match_id) }}" class="schedule-game {{ game.status }} match-card-link">
+          {% else %}
+          <div class="schedule-game {{ game.status }}">
+          {% endif %}
+            <div class="schedule-matchup">
+              <span>{{ game.home_team }}</span>
+              <strong>vs</strong>
+              <span>{{ game.away_team }}</span>
+            </div>
+            <span class="schedule-status {{ game.status }}">{{ game.status }}</span>
+          {% if game.status == "completed" and game.match_id %}
+          </a>
+          {% else %}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">No schedule games imported yet.</div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

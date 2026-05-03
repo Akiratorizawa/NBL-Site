@@ -36,7 +36,7 @@
             </td>
             <td>
               <a href="{{ url_for('team_detail', team_id=team.id) }}" style="display:inline-flex; align-items:center; gap:14px; text-decoration:none;">
-                <div class="team-logo-sm">{{ team.logo }}</div>
+                <img class="team-logo-sm team-logo-img" src="{{ team.logo_url or url_for('static', filename='img/team-logo-fallback.svg') }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/team-logo-fallback.svg') }}';" />
                 <div>
                   <div class="team-name-main">{{ team.name }}</div>
                   <div class="team-abbr">{{ team.city }} · {{ team.abbr }}</div>

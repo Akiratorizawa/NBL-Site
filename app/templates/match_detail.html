@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}{{ match.home }} vs {{ match.away }} - Box Score{% endblock %}
+
+{% macro stat_table(team_name, logo_url, rows, totals) %}
+{% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
+<section class="box-score-card">
+  <div class="box-score-team-header">
+    <img class="team-logo-sm team-logo-img" src="{{ logo_url or fallback_logo }}" alt="{{ team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+    <h2>{{ team_name }}</h2>
+  </div>
+  <div class="box-score-table-wrap">
+    <table class="box-score-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th class="num">PTS</th>
+          <th class="num">FGM</th>
+          <th class="num">FGA</th>
+          <th class="num">3PM</th>
+          <th class="num">3PA</th>
+          <th class="num">FTM</th>
+          <th class="num">FTA</th>
+          <th class="num">AST</th>
+          <th class="num">REB</th>
+          <th class="num">STL</th>
+          <th class="num">BLK</th>
+          <th class="num">TOV</th>
+          <th class="num">FLS</th>
+          <th class="num">+/-</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>
+            {% if row.is_walkon %}
+              {{ row.walkon_name }}
+              <span class="box-score-walkon">Walk-on</span>
+            {% else %}
+              <a class="player-link" href="{{ url_for('player_detail', player_id=row.player_id) }}">{{ row.player_name }}</a>
+            {% endif %}
+          </td>
+          <td class="num stat-main">{{ row.pts }}</td>
+          <td class="num">{{ row.fgm }}</td>
+          <td class="num">{{ row.fga }}</td>
+          <td class="num">{{ row.three_pm }}</td>
+          <td class="num">{{ row.three_pa }}</td>
+          <td class="num">{{ row.ftm }}</td>
+          <td class="num">{{ row.fta }}</td>
+          <td class="num">{{ row.ast }}</td>
+          <td class="num">{{ row.reb }}</td>
+          <td class="num">{{ row.stl }}</td>
+          <td class="num">{{ row.blk }}</td>
+          <td class="num">{{ row.tov }}</td>
+          <td class="num">{{ row.fls }}</td>
+          <td class="num">{{ row.plus_minus }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="box-score-totals">
+          <td>Totals</td>
+          <td class="num">{{ totals.pts }}</td>
+          <td class="num">{{ totals.fgm }}</td>
+          <td class="num">{{ totals.fga }}</td>
+          <td class="num">{{ totals.three_pm }}</td>
+          <td class="num">{{ totals.three_pa }}</td>
+          <td class="num">{{ totals.ftm }}</td>
+          <td class="num">{{ totals.fta }}</td>
+          <td class="num">{{ totals.ast }}</td>
+          <td class="num">{{ totals.reb }}</td>
+          <td class="num">{{ totals.stl }}</td>
+          <td class="num">{{ totals.blk }}</td>
+          <td class="num">{{ totals.tov }}</td>
+          <td class="num">{{ totals.fls }}</td>
+          <td class="num">{{ totals.plus_minus }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endmacro %}
+
+{% block content %}
+{% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
+<div class="container">
+  <br>
+  <a href="{{ url_for('matches') }}" class="player-back-link">Back to Matches</a>
+
+  <header class="box-score-hero">
+    <div class="box-score-matchup">
+      <div class="box-score-team">
+        <img class="team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+        <span>{{ match.home }}</span>
+      </div>
+      <div class="box-score-final">
+        <div class="box-score-stage">{{ match.stage }} | {{ match.date }}</div>
+        <div class="box-score-score">{{ match.home_score }} - {{ match.away_score }}</div>
+        <div class="badge badge-done">Final</div>
+      </div>
+      <div class="box-score-team away">
+        <img class="team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+        <span>{{ match.away }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="box-score-grid">
+    {{ stat_table(match.home, match.home_logo_url, home_stats, home_totals) }}
+    {{ stat_table(match.away, match.away_logo_url, away_stats, away_totals) }}
+  </div>
+</div>
+{% endblock %}

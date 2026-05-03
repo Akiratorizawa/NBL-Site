@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container">
+  {% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
 
   <div class="page-header">
     <div class="page-header-inner">
@@ -18,7 +19,7 @@
       {% for team in teams %}
       <div class="team-card" style="--team-color: {{ team.color }};">
         <div class="team-card-header">
-          <div class="team-card-logo">{{ team.logo }}</div>
+          <img class="team-card-logo team-logo-img" src="{{ team.logo_url or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div class="team-card-name">{{ team.name }}</div>
           <div class="team-card-city">{{ team.city }}</div>
         </div>
@@ -36,7 +37,11 @@
               <div class="record-label">Losses</div>
             </div>
             <div class="record-stat">
+              {% if (team.wins + team.losses) != 0 %}
               <div class="record-value" style="font-size:20px; color:var(--text-1);">{{ "%.3f"|format(team.wins / (team.wins + team.losses)) }}</div>
+              {% else %}
+              <div class="record-value" style="font-size:20px; color:var(--text-1);">N/A</div>
+              {% endif %}
               <div class="record-label">Win %</div>
             </div>
           </div>
@@ -45,7 +50,7 @@
           <div class="roster-list">
             {% for player in team.roster %}
             <div class="roster-player">
-              <span class="player-name">{{ player.name }}</span>
+              <a class="player-name player-link" href="{{ url_for('player_detail', player_id=player.id) }}">{{ player.name }}</a>
               <span class="player-pos">{{ player.position }}</span>
               <span class="player-rating" style="color: {{ team.color }};">{{ player.rating }}</span>
             </div>

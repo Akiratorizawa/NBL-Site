@@ -81,8 +81,8 @@
               <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
               <td>
                 <div class="stat-player-cell">
-                  <div class="stat-player-name">{{ p.name }}</div>
-                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                  <div class="stat-player-name"><a class="player-link" href="{{ url_for('player_detail', player_id=p.id) }}">{{ p.name }}</a></div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.position }}</div>
                 </div>
               </td>
               <td class="r">
@@ -126,8 +126,8 @@
               <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
               <td>
                 <div class="stat-player-cell">
-                  <div class="stat-player-name">{{ p.name }}</div>
-                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                  <div class="stat-player-name"><a class="player-link" href="{{ url_for('player_detail', player_id=p.id) }}">{{ p.name }}</a></div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.position }}</div>
                 </div>
               </td>
               <td class="r">
@@ -171,8 +171,8 @@
               <td><span class="stat-rank-cell stat-rank-{{ loop.index if loop.index <= 3 else '' }}">{{ loop.index }}</span></td>
               <td>
                 <div class="stat-player-cell">
-                  <div class="stat-player-name">{{ p.name }}</div>
-                  <div class="stat-player-team">{{ p.team }} · {{ p.pos }}</div>
+                  <div class="stat-player-name"><a class="player-link" href="{{ url_for('player_detail', player_id=p.id) }}">{{ p.name }}</a></div>
+                  <div class="stat-player-team">{{ p.team }} · {{ p.position }}</div>
                 </div>
               </td>
               <td class="r">
@@ -216,8 +216,8 @@
             <tr>
               <td>
                 <div class="stat-player-cell">
-                  <div class="stat-player-name">{{ p.name }}</div>
-                  <div class="stat-player-team">{{ p.team_abbr }} · {{ p.pos }}</div>
+                  <div class="stat-player-name"><a class="player-link" href="{{ url_for('player_detail', player_id=p.id) }}">{{ p.name }}</a></div>
+                  <div class="stat-player-team">{{ p.team_abbr }} · {{ p.position }}</div>
                 </div>
               </td>
               <td class="r"><span class="stat-primary-val" style="font-size:14px;">{{ p.ppg }}</span></td>
@@ -251,11 +251,11 @@
           <span class="mvp-score-label">MVS</span>
         </div>
 
-        <div class="mvp-player-name">{{ p.name }}</div>
+        <div class="mvp-player-name"><a class="player-link" href="{{ url_for('player_detail', player_id=p.id) }}">{{ p.name }}</a></div>
         <div class="mvp-player-meta">
           <span>{{ p.team }}</span>
           <span class="mvp-dot"></span>
-          <span>{{ p.pos }}</span>
+          <span>{{ p.position }}</span>
           <span class="mvp-dot"></span>
           <span>{{ p.gp }} GP</span>
         </div>

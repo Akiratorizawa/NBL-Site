@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ stage_name }} - Matches{% endblock %}
+
+{% block content %}
+{% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
+<div class="container">
+  <div class="stage-hero">
+    <div class="stage-hero-inner">
+      <h1 class="stage-title">{{ stage_name }}</h1>
+      <div class="stage-subtitle">{{ matches|length }} matches</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="stage-cards">
+      {% for match in matches %}
+      {% if match.status == "completed" %}
+      <a href="{{ url_for('match_detail', match_id=match.id) }}" class="stage-match-card match-card-link">
+      {% else %}
+      <div class="stage-match-card">
+      {% endif %}
+        <div class="stage-match-teams">
+          <div class="stage-team">
+            <img class="team-logo-sm team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+            <span>{{ match.home }}</span>
+          </div>
+          <span class="stage-vs">vs</span>
+          <div class="stage-team stage-team-away">
+            <img class="team-logo-sm team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+            <span>{{ match.away }}</span>
+          </div>
+        </div>
+        {% if match.status == "completed" %}
+        <div class="stage-match-score">{{ match.home_score }} - {{ match.away_score }}</div>
+        <div class="stage-match-status done">Completed</div>
+        {% else %}
+        <div class="stage-match-score">VS</div>
+        <div class="stage-match-status upcoming">Upcoming</div>
+        {% endif %}
+        <div class="stage-match-date">{{ match.date }}</div>
+      {% if match.status == "completed" %}
+      </a>
+      {% else %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
