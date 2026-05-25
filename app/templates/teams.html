@@ -19,7 +19,7 @@
       {% for team in teams %}
       <div class="team-card" style="--team-color: {{ team.color }};">
         <div class="team-card-header">
-          <img class="team-card-logo team-logo-img" src="{{ team.logo_url or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+          <img class="team-card-logo team-logo-img" src="{{ team.logo_url|logo_src or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div class="team-card-name">{{ team.name }}</div>
           <div class="team-card-city">{{ team.city }}</div>
         </div>

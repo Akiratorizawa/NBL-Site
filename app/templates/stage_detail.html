@@ -21,12 +21,12 @@
       {% endif %}
         <div class="stage-match-teams">
           <div class="stage-team">
-            <img class="team-logo-sm team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+            <img class="team-logo-sm team-logo-img" src="{{ match.home_logo_url|logo_src or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
             <span>{{ match.home }}</span>
           </div>
           <span class="stage-vs">vs</span>
           <div class="stage-team stage-team-away">
-            <img class="team-logo-sm team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+            <img class="team-logo-sm team-logo-img" src="{{ match.away_logo_url|logo_src or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
             <span>{{ match.away }}</span>
           </div>
         </div>

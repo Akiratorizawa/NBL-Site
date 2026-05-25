@@ -36,7 +36,7 @@
           <a href="{{ url_for('team_detail', team_id=team.id) }}" style="display:block; text-decoration:none;">
             <div class="mini-team-row rank-{{ team.rank }}">
               <div class="mini-rank">{{ team.rank }}</div>
-              <img class="team-logo-sm team-logo-img" src="{{ team.logo_url or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <img class="team-logo-sm team-logo-img" src="{{ team.logo_url|logo_src or fallback_logo }}" alt="{{ team.name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div class="mini-team-info">
                 <div class="mini-team-name">{{ team.name }}</div>
                 <div class="mini-record">{{ team.wins }}W - {{ team.losses }}L</div>
@@ -64,7 +64,7 @@
           {% for match in upcoming %}
           <div class="match-card upcoming">
             <div class="match-team home">
-              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url|logo_src or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.home }}</div>
                 <div class="match-team-city">Home</div>
@@ -77,7 +77,7 @@
             </div>
 
             <div class="match-team away">
-              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url|logo_src or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.away }}</div>
                 <div class="match-team-city">Away</div>
@@ -100,7 +100,7 @@
       {% for match in recent %}
       <a href="{{ url_for('match_detail', match_id=match.id) }}" class="match-card completed match-card-link">
         <div class="match-team home">
-          <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+          <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url|logo_src or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div>
             <div class="match-team-name">{{ match.home }}</div>
             <div class="match-team-city">Home</div>
@@ -117,7 +117,7 @@
         </div>
 
         <div class="match-team away">
-          <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+          <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url|logo_src or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
           <div>
             <div class="match-team-name">{{ match.away }}</div>
             <div class="match-team-city">Away</div>

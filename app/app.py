@@ -3,12 +3,12 @@ import csv
 import re
 import secrets
 import requests
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from datetime import datetime
 from functools import wraps
 from flask import (
     Flask, render_template, session, redirect,
-    url_for, request, flash, abort, g
+    url_for, request, flash, abort, g, Response
 )
 import db as _db
 
@@ -36,6 +36,11 @@ ADMIN_IDS = {
 BANNER_DEFAULTS = {
     "banner_speed": "5",
     "banner_autoscroll": "true",
+}
+
+ALLOWED_LOGO_HOSTS = {
+    "drive.usercontent.google.com",
+    "lh3.googleusercontent.com",
 }
 
 SCHEDULE_CSV_PATH = os.path.join(app.root_path, "templates", "[NBL] - Season 1  - Schedule.csv")
@@ -256,6 +261,43 @@ def _get_banner_settings():
     for row in rows:
         settings[row["key"]] = row["value"]
     return settings
+
+def _is_proxyable_logo_url(raw_url: str) -> bool:
+    if not raw_url:
+        return False
+    parsed = urlparse(raw_url)
+    return parsed.scheme in {"http", "https"} and parsed.netloc.lower() in ALLOWED_LOGO_HOSTS
+
+
+@app.template_filter("logo_src")
+def logo_src(raw_url: str) -> str:
+    if not raw_url:
+        return ""
+    if _is_proxyable_logo_url(raw_url):
+        return url_for("logo_proxy", url=raw_url)
+    return raw_url
+
+
+@app.route("/logo-proxy")
+def logo_proxy():
+    raw_url = request.args.get("url", "")
+    if not _is_proxyable_logo_url(raw_url):
+        abort(400)
+
+    try:
+        upstream = requests.get(raw_url, timeout=10)
+        upstream.raise_for_status()
+    except requests.RequestException:
+        abort(502)
+
+    content_type = upstream.headers.get("Content-Type", "").split(";", 1)[0].lower()
+    if not content_type.startswith("image/"):
+        abort(502)
+
+    response = Response(upstream.content, mimetype=content_type)
+    response.headers["Cache-Control"] = "public, max-age=86400"
+    return response
+
 
 # ── CONTEXT PROCESSOR ────────────────────────────────────────
 @app.context_processor

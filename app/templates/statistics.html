@@ -14,6 +14,7 @@
     </div>
   </div>
 
+  {% if top_scorers %}
   <!-- SUMMARY BAR -->
   <section style="padding: 40px 0 0;">
     <div class="stats-summary-bar">
@@ -285,6 +286,14 @@
       {% endfor %}
     </div>
   </section>
+  {% else %}
+  <section class="section">
+    <div class="stats-table-card" style="padding: 32px; text-align:center;">
+      <div class="stats-card-title">No Player Stats Yet</div>
+      <div class="stats-card-subtitle" style="margin-top:8px;">Add players and post match results to populate season leaderboards.</div>
+    </div>
+  </section>
+  {% endif %}
 
 </div>
 {% endblock %}

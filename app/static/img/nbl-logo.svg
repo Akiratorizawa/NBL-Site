@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="NBL logo">
+  <rect width="128" height="128" rx="24" fill="#0f1117"/>
+  <circle cx="64" cy="64" r="48" fill="#ff7a00"/>
+  <path d="M17 64h94" stroke="#111318" stroke-width="7" stroke-linecap="round"/>
+  <path d="M64 16c-16 17-16 79 0 96" fill="none" stroke="#111318" stroke-width="7" stroke-linecap="round"/>
+  <path d="M64 16c16 17 16 79 0 96" fill="none" stroke="#111318" stroke-width="7" stroke-linecap="round"/>
+  <rect x="23" y="47" width="82" height="34" rx="8" fill="#111318" opacity=".92"/>
+  <text x="64" y="72" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#ffffff">NBL</text>
+</svg>

@@ -25,7 +25,7 @@
           {% endif %}
           <a href="{{ url_for('match_detail', match_id=match.id) }}" class="match-card completed match-card-link">
             <div class="match-team home">
-              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <img class="match-team-logo team-logo-img" src="{{ match.home_logo_url|logo_src or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.home }}</div>
                 <div class="match-team-city">Home</div>
@@ -47,7 +47,7 @@
             </div>
 
             <div class="match-team away">
-              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+              <img class="match-team-logo team-logo-img" src="{{ match.away_logo_url|logo_src or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
               <div>
                 <div class="match-team-name">{{ match.away }}</div>
                 <div class="match-team-city" style="text-align:right;">Away</div>

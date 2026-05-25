@@ -5,7 +5,7 @@
 {% set fallback_logo = url_for('static', filename='img/team-logo-fallback.svg') %}
 <section class="box-score-card">
   <div class="box-score-team-header">
-    <img class="team-logo-sm team-logo-img" src="{{ logo_url or fallback_logo }}" alt="{{ team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+    <img class="team-logo-sm team-logo-img" src="{{ logo_url|logo_src or fallback_logo }}" alt="{{ team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
     <h2>{{ team_name }}</h2>
   </div>
   <div class="box-score-table-wrap">
@@ -88,7 +88,7 @@
   <header class="box-score-hero">
     <div class="box-score-matchup">
       <div class="box-score-team">
-        <img class="team-logo-img" src="{{ match.home_logo_url or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+        <img class="team-logo-img" src="{{ match.home_logo_url|logo_src or fallback_logo }}" alt="{{ match.home }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
         <span>{{ match.home }}</span>
       </div>
       <div class="box-score-final">
@@ -97,7 +97,7 @@
         <div class="badge badge-done">Final</div>
       </div>
       <div class="box-score-team away">
-        <img class="team-logo-img" src="{{ match.away_logo_url or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+        <img class="team-logo-img" src="{{ match.away_logo_url|logo_src or fallback_logo }}" alt="{{ match.away }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
         <span>{{ match.away }}</span>
       </div>
     </div>

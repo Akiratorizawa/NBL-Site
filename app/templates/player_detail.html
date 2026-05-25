@@ -11,7 +11,7 @@
       <div class="player-hero-accent"></div>
       <div class="player-hero-main">
         <div class="player-team-mark">
-          <img src="{{ player.team_logo_url or fallback_logo }}" alt="{{ player.team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
+          <img src="{{ player.team_logo_url|logo_src or fallback_logo }}" alt="{{ player.team_name }}" onerror="this.onerror=null;this.src='{{ fallback_logo }}';" />
         </div>
 
         <div class="player-identity">
